@@ -6,4 +6,4 @@ towns = towns()
 nations = nations()
 players = players()
 
-print(players.all()[0])
+#print(towns.get())

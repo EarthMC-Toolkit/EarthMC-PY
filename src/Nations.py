@@ -1,8 +1,9 @@
-import json, requests
+from .Functions import functions
+
+functions = functions()
 
 class nations:
     def __init__(self):
-        self.methods = ["all", "get"]
-    def printMethods(self):
-        for method in self.methods:
-            print('\t%s ' % method)
+        self.methodsArray = ["all", "get"]
+    def methods(self): return self.methodsArray
+    def all(self): return "Not created yet."
