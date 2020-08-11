@@ -6,4 +6,4 @@ towns = towns()
 nations = nations()
 players = players()
 
-#print(towns.get())
+print(players.allOnline())

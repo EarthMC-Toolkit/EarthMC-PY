@@ -6,7 +6,7 @@ class players:
     def __init__(self):
         self.methodsArray = ["all", "townless", "getOnlinePlayer", "getOnlinePlayers", "getResident", "getResidents"]
     def methods(self): return self.methodsArray
-    def all(self): return functions.getPlayerData()["players"]
+    def allOnline(self): return functions.getPlayerData()["players"]
     def getOnlinePlayer(self, playerName):
         onlinePlayerData = functions.getPlayerData()
 
