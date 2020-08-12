@@ -1,9 +1,9 @@
 from src.Towns import towns
 from src.Nations import nations
-from src.Players import players
+from src.OnlinePlayers import onlinePlayers
 
 towns = towns()
 nations = nations()
-players = players()
+onlinePlayers = onlinePlayers()
 
-print(players.allOnline())
+print(towns.get("London"))

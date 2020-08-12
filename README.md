@@ -4,7 +4,7 @@ Provides info on the EarthMC Minecraft server.
 
 ## Installation
 ```bash
-$ pip install earthmc
+$ pip install EarthMC
 ```
 
 ## Import and instantiate classes
