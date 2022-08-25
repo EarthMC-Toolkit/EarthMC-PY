@@ -1,7 +1,7 @@
-from .Functions import functions
+from .Utils import utils
 from .OnlinePlayers import onlinePlayers
 
-functions = functions()
+utils = utils()
 onlinePlayers = onlinePlayers()
 
 class Town:
@@ -15,13 +15,9 @@ class Town:
     def __repr__(self):
         return "Name: %s \nNation: %s \nMayor: %s \nResidents: %s \nX: %s \nZ: %s" % (self.name, self.nation, self.mayor, self.residents, self.x, self.z)
 
-def createTown(name, nation, mayor, residents, x, z):
-    return Town(name, nation, mayor, residents, x, z)
-
 class towns:
     def all(self):
-        mapData = functions.getMapData()
-
+        mapData = utils.getMapData()
         townsArray = []
 
         if mapData is not None: townData = mapData["sets"]['townyPlugin.markerset']["areas"]
@@ -36,7 +32,7 @@ class towns:
             info = []
 
             for x in rawinfo:
-                info.append(functions.striptags(x))
+                info.append(utils.striptags(x))
 
             townName = info[0].split(" (")[0].strip()         
             if townName.endswith("(Shop)"): continue
@@ -50,9 +46,9 @@ class towns:
             x = round((max(town["x"]) + min(town["x"])) / 2)
             z = round((max(town["z"]) + min(town["z"])) / 2)
 
-            currentTown = createTown(townName, nationName, mayor, residents, x, z)
+            currentTown = Town(townName, nationName, mayor, residents, x, z)
             townsArray.append(currentTown)
 
         return townsArray
     def get(self, townName):
-        return functions.find(lambda town: town.name == townName, self.all())
+        return utils.find(lambda town: town.name == townName, self.all())
