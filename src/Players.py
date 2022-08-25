@@ -12,29 +12,32 @@ class OnlinePlayer:
         self.z = z
     def __repr__(self):
         return "Name: %s \nWorld: %s \nX: %s \nY: %s \nZ: %s" % (self.name, self.world, self.x, self.y, self.z)
-        
+
 class players:
+    def all(self): return self.townless.all() + self.residents.all()
     def __init__(self, map): 
-       # self.all = self.all(map)
         self.online = self.online(map)
         self.residents = self.residents(map)
         self.townless = self.townless(map)
-
-    class all:
-        def __init__(self, map): 
-            self.mapName = map
 
     class residents:
         def __init__(self, map): 
             self.mapName = map
             self.towns = towns(map)
-        def all(self): return NotImplementedError
+        def all(self): 
+            output = []
+
+            for t in self.towns.all():
+                for res in t.residents:
+                    output.append(res)
+
+            return output
 
     class townless:
         def __init__(self, map): 
             self.mapName = map
             self.playerData = utils.playerData(map)
-        def all(self): return NotImplementedError
+        def all(self): return []
 
     class online:
         def __init__(self, map): 

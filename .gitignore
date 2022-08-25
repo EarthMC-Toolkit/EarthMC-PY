@@ -77,4 +77,3 @@ dmypy.json
 .pytype/
 setup.py
 .gitattributes
-src/__init__.py
