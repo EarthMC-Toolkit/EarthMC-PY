@@ -13,7 +13,7 @@ class Map:
         self.towns = towns(name)
         self.players = players(name)
 
-        self.totalChunks = Map.townAreas(self.towns.all())
+        self.totalChunks = int(Map.townAreas(self.towns.all()))
         #self.totalPlayers = len(self.players.residents.all()) + len(self.players.townless.all())
 
 Aurora = Map('aurora')
