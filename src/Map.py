@@ -1,18 +1,23 @@
 from .Utils import utils
-from .Nations import nations, Nation
-from .Towns import towns, Town
-from .OnlinePlayers import onlinePlayers, OnlinePlayer
 
-# TODO: Add more map properties
+from .Nations import nations
+from .Towns import towns
+from .Players import players
 
-class Map:
+class EMCMap:
+    def townAreas(self, towns): 
+        chunks = 0
+        for i in range(len(towns)):
+            chunks += utils.townArea(towns[i])
+
+        return chunks
     def __init__(self, name=''): 
-        if name.lower() != 'aurora' or 'nova': 
-            return ValueError("Invalid map name!\nMust be 'aurora' or 'nova'")
+        if name.lower() != 'aurora' and name.lower() != 'nova': return None
 
         self.name = name
+        self.nations = nations(name)
+        self.towns = towns(name)
+        self.players = players(name)
 
-        totals = utils.getTotals()
-        self.totalResidents = totals.residents
-        self.totalTowns = totals.towns
-        self.totalNations = totals.nations
+        #self.totalChunks = self.townAreas(self.towns.all())
+        #self.totalPlayers = len(players.residents) + len(players.townless)

@@ -14,20 +14,39 @@ class MLStripper(HTMLParser):
     def get_data(self): return self.text.getvalue()
 
 class utils:
-    def striptags(self, html):
+    @staticmethod
+    def striptags(html):
         s = MLStripper()
         s.feed(html)
         return s.get_data()
-    def find(self, pred, iterable):
+    @staticmethod
+    def find(pred, iterable):
+        found = None
         for element in iterable:
             if pred(element):
-                return element
+                found = element
+                break
 
-        return None
-    def intersection(self, arr1, arr2): return list(filter(lambda x: x in arr1, arr2))
-    def getPlayerData(self, map): return requests.get("https://earthmc.net/map/up/world/earth/").json()
-    def getMapData(self, map): 
-        req = requests.get("https://earthmc.net/map/aurora/tiles/_markers_/marker_earth.json")
-
+        return found
+    @staticmethod
+    def intersection(arr1, arr2): return list(filter(lambda x: x in arr1, arr2))
+    @staticmethod
+    def asJSON(req):
         try: return req.json()
-        except: return ValueError("Response content is not valid JSON")
+        except: raise ValueError("Response content is not valid JSON")
+    @staticmethod
+    def playerData(map): return utils.asJSON(requests.get("https://earthmc.net/map/" + map + "/up/world/earth/"))
+    @staticmethod
+    def mapData(map): return utils.asJSON(requests.get("https://earthmc.net/map/" + map + "/tiles/_markers_/marker_earth.json"))
+    @staticmethod
+    def townArea(town): return utils.calcArea(town.x, town.z, len(town.x))
+    @staticmethod
+    def calcArea(x, z, points, divisor=256):
+        area = 0
+        j = points-1
+
+        for i in range(points):
+            area += (x[j] + x[i]) * (z[j] - z[i])
+            j = i
+
+        return abs(area/2) / divisor    
