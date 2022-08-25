@@ -1,6 +1,8 @@
 from .Utils import utils
 utils = utils()
 
+from .Towns import towns
+
 class OnlinePlayer:
     def __init__(self, name="", world="", x=0, y=0, z=0):
         self.name = name
@@ -13,23 +15,40 @@ class OnlinePlayer:
         
 class players:
     def __init__(self, map): 
+       # self.all = self.all(map)
         self.online = self.online(map)
+        self.residents = self.residents(map)
+        self.townless = self.townless(map)
+
+    class all:
+        def __init__(self, map): 
+            self.mapName = map
+
     class residents:
-        def __init__(self): raise NotImplementedError
+        def __init__(self, map): 
+            self.mapName = map
+            self.towns = towns(map)
+        def all(self): return NotImplementedError
+
     class townless:
-        def __init__(self): raise NotImplementedError
+        def __init__(self, map): 
+            self.mapName = map
+            self.playerData = utils.playerData(map)
+        def all(self): return NotImplementedError
+
     class online:
-        def __init__(self, map): self.mapName = map
+        def __init__(self, map): 
+            self.mapName = map
+            self.data = utils.playerData(map)
         def all(self):
-            data = utils.playerData(self.mapName)
             output = []
             
-            for player in data['players']:
+            for player in self.data['players']:
                 currentPlayer = OnlinePlayer(player["account"], player["world"], player["x"], player["y"], player["z"])
                 output.append(currentPlayer)
             
             return output
-        def find(self, playerName): return self.get(self, playerName)
+        def find(self, playerName): return self.get(playerName)
         def get(self, playerName, players=None):
             if players is None: players = self.all()
             foundPlayer = utils.find(lambda player: player.name == playerName, players)
