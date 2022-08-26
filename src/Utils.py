@@ -13,6 +13,10 @@ class MLStripper(HTMLParser):
     def handle_data(self, d): self.text.write(d)
     def get_data(self): return self.text.getvalue()
 
+class FetchError(Exception):
+    """Raised when there was an error fetching data from Dynmap."""
+    pass
+
 class utils:
     @staticmethod
     def striptags(html):

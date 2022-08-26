@@ -16,19 +16,20 @@ from EarthMC import Aurora, Nova
 <summary>Players</summary>
 <p>
 
+#### **Base Reference**
 ```py 
 ap = Aurora.players
-print(ap()) # => Outputs all players. (Townless and Residents)
+print(ap.all()) # => Outputs all players. (Townless and Residents)
 ```
 
-#### All (List)
+#### **All** (List)
 ```py
-online = ap.online.all()
-townless = ap.townless.all()
-residents = ap.residents.all() 
+online = ap.online.all() # => Outputs list of online players.
+townless = ap.townless.all() # => Outputs list of townless players. (Online without a town)
+residents = ap.residents.all() # => Outputs list of residents. 
 ```
 
-#### Get (Object)
+#### **Get** (Object)
 ```py
 op = ap.online.get('PlayerName')
 tp = ap.townless.get('PlayerName')

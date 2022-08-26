@@ -1,4 +1,4 @@
-from .Utils import utils
+from .Utils import FetchError, utils
 utils = utils()
 
 class Town:
@@ -16,16 +16,20 @@ class Town:
 class towns:
     def __init__(self, map): self.mapName = map
     def all(self):
-        mapData = utils.mapData(self.mapName)
-        townsArray = []
+        townsArray, areas = []
+        mapData = None
+        
+        try: 
+            mapData = utils.mapData(self.mapName)
 
-        if mapData is not None: townData = mapData["sets"]['townyPlugin.markerset']["areas"]
-        else: raise ValueError("Map data is of type 'None'")
+            if mapData is not None: areas = mapData["sets"]['townyPlugin.markerset']["areas"]
+            else: raise FetchError
+        except FetchError: print("Error fetching map data! Type is 'None'")
 
-        townAreaNames = list(townData.keys())
+        townAreaNames = list(areas.keys())
 
         for i in range(len(townAreaNames)):
-            town = townData[townAreaNames[i]]
+            town = areas[townAreaNames[i]]
             rawinfo = town["desc"].split("<br />")
 
             info = []

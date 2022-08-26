@@ -13,5 +13,7 @@ class Nation:
         return "Name: %s \nKing: %s \nCapital: %s \nResidents: %s \nTowns: %s \n" % (self.name, self.king, self.capital, self.residents, self.towns)
         
 class nations:
-    def __init__(self, map): self.mapName = map
+    def __init__(self, map): 
+        self.mapName = map
+        self.mapData = utils.mapData(map)
     def all(self): return NotImplementedError
