@@ -3,6 +3,17 @@ import requests
 from io import StringIO
 from html.parser import HTMLParser
 
+jsonUrls = {
+    "map": {
+        "nova": "https://earthmc.net/map/nova/tiles/_markers_/marker_earth.json",
+        "aurora": "https://earthmc.net/map/aurora/tiles/_markers_/marker_earth.json"
+    },
+    "player": {
+        "nova": "https://earthmc.net/map/nova/up/world/earth/",
+        "aurora": "https://earthmc.net/map/aurora/standalone/dynmap_earth.json"
+    }
+}
+
 class MLStripper(HTMLParser):
     def __init__(self):
         super().__init__()
@@ -39,9 +50,9 @@ class utils:
         try: return req.json()
         except: raise ValueError("Response content is not valid JSON")
     @staticmethod
-    def playerData(map): return utils.asJSON(requests.get("https://earthmc.net/map/" + map + "/up/world/earth/"))
+    def playerData(map): return utils.asJSON(requests.get(jsonUrls["player"][map]))
     @staticmethod
-    def mapData(map): return utils.asJSON(requests.get("https://earthmc.net/map/" + map + "/tiles/_markers_/marker_earth.json"))
+    def mapData(map): return utils.asJSON(requests.get(jsonUrls["map"][map]))
     @staticmethod
     def townArea(town): return utils.calcArea(town.x, town.z, len(town.x))
     @staticmethod
