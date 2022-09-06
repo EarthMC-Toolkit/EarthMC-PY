@@ -16,7 +16,8 @@ class Town:
 class towns:
     def __init__(self, map): self.mapName = map
     def all(self):
-        townsArray, areas = []
+        townsArray = []
+        areas = []
         mapData = None
         
         try: 
