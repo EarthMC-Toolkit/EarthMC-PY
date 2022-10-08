@@ -1,4 +1,4 @@
-from .Utils import FetchError, utils
+from ..Utils import FetchError, utils
 utils = utils()
 
 class Town:
