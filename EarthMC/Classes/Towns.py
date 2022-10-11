@@ -1,5 +1,6 @@
-from ..Utils import FetchError, utils
-utils = utils()
+from re import T
+from ..Utils import FetchError, utilFuncs
+utils = utilFuncs()
 
 class Town:
     def __init__(self, name="", nation="", mayor="", residents=[], area=0, x=0, z=0):
@@ -11,16 +12,21 @@ class Town:
         self.x = x
         self.z = z
     def __repr__(self):
-        return "Name: %s \nNation: %s \nMayor: %s \nResidents: %s \nArea: %s \nX: %s \nZ: %s" % (self.name, self.nation, self.mayor, self.residents, self.area, self.x, self.z)
+        str = "Name: %s \nNation: %s \nMayor: %s \nResidents: %s \nArea: %s \nX: %s \nZ: %s"
+        list = (self.name, self.nation, self.mayor, self.residents, self.area, self.x, self.z)
+
+        return str % list
         
 class towns:
-    def __init__(self, map): self.mapName = map
+    def __init__(self, map): 
+        self.mapName = map
     def all(self):
-        townsArray, areas = []
+        townsArray = []
+        areas = {}
         mapData = None
         
         try: 
-            mapData = utils.mapData(self.mapName)
+            mapData = utils.fetchData('map', self.mapName)
 
             if mapData is not None: areas = mapData["sets"]['townyPlugin.markerset']["areas"]
             else: raise FetchError
@@ -51,8 +57,8 @@ class towns:
             x = round((max(town["x"]) + min(town["x"])) / 2)
             z = round((max(town["z"]) + min(town["z"])) / 2)
 
-            currentTown = Town(townName, nationName, mayor, residents, area, x, z)
-            townsArray.append(currentTown)
+            ct = Town(townName, nationName, mayor, residents, area, x, z)
+            townsArray.append(vars(ct))
 
         return townsArray
     def get(self, townName, towns=None):
