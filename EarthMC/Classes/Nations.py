@@ -41,12 +41,11 @@ class nations:
                 nations.append(vars(existing))
 
             # Add up existing values
-            existing.residents.extend(town['residents'])
-
-            existing.residents = list(dict.fromkeys(existing.residents))
+            townName = town['name']
             existing.area += town['area']
 
-            townName = town['name']
+            existing.residents.extend(town['residents'])
+            existing.residents = list(dict.fromkeys(existing.residents))
 
             if existing.name == nationName:
                 existing.towns.append(townName)
