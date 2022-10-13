@@ -1,4 +1,5 @@
 import requests
+import re
 
 from io import StringIO
 from html.parser import HTMLParser
@@ -50,7 +51,13 @@ class utilFuncs:
     #def difference(arr1, arr2): return filter(lambda x: x not in arr1, arr2)
 
     @staticmethod
+    def removeStyleCharacters(string): return re.sub('/(&amp;.|&[0-9kmnola-z])/g', "", string)
+
+    @staticmethod
     def townArea(town): return utilFuncs.calcArea(town.x, town.z, len(town.x))
+
+    @staticmethod
+    def strAsBool(string): return True if string == 'true' else False
     
     @staticmethod
     def calcArea(x, z, points, divisor=256):
