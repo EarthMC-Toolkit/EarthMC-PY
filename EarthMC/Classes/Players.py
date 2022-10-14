@@ -43,10 +43,10 @@ class players:
             output = []
 
             for p in self.ops:
-                foundRes = utils.find(lambda res: res == p.name, self.resList)
+                foundRes = utils.find(lambda res: res == p['name'], self.resList)
                 if foundRes is not None: continue
                 
-                output.append(vars(p))
+                output.append(p)
 
             return output
 
@@ -62,7 +62,7 @@ class players:
         def find(self, playerName): return self.get(playerName)
         def get(self, playerName, ops=None):
             if ops is None: ops = self.all()
-            foundPlayer = utils.find(lambda player: player.name == playerName, ops)
+            foundPlayer = utils.find(lambda player: player['name'] == playerName, ops)
         
             if foundPlayer is None: return "Could not find player '" + playerName + "'" 
             return foundPlayer

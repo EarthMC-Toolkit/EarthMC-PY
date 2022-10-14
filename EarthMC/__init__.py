@@ -1,6 +1,4 @@
-from .Classes.Players import players
-from .Classes.Towns import towns
-from .Classes.Nations import nations
+from .Classes import players, towns, nations
 
 from .Utils import utilFuncs
 utils = utilFuncs()
@@ -19,7 +17,7 @@ class Map:
         self.players = players(self.name)
 
         self.totalChunks = int(Map.townAreas(self.towns.all()))
-        #self.totalPlayers = len(self.players.residents.all()) + len(self.players.townless.all())
+        self.totalPlayers = len(self.players.residents.all()) + len(self.players.townless.all())
 
 Aurora = Map('aurora')
 Nova = Map('nova')     
