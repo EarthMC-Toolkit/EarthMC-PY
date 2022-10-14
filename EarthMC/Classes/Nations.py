@@ -2,6 +2,7 @@ from ..Utils import utilFuncs
 utils = utilFuncs()
 
 from .Towns import towns
+from cachetools.func import ttl_cache
 
 class Nation:
     def __init__(self, name="", king="", capital="", residents=[], towns=[], area=0):
@@ -18,13 +19,18 @@ class Nation:
         
 class nations:
     def __init__(self, map):
+        #print("Creating new 'nations' instance")
         self.towns = towns(map).all()
+
+    @ttl_cache(4, 120)
     def get(self, nationName, nations=None):
         if nations is None: nations = self.all()
         foundNation = utils.find(lambda n: n['name'] == nationName, nations)
 
         if foundNation is None: return "Could not find nation '" + nationName + "'" 
         return foundNation
+
+    @ttl_cache(16, 120)
     def all(self):
         raw = {}
         output = []

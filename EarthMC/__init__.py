@@ -1,4 +1,4 @@
-from .Classes import players, towns, nations
+from .Classes import Towns, Nations, Players
 
 from .Utils import utilFuncs
 utils = utilFuncs()
@@ -12,9 +12,9 @@ class Map:
         self.mapData = utils.fetchData('map', self.name)
         self.playerData = utils.fetchData('players', self.name)
 
-        self.towns = towns(self.name)
-        self.nations = nations(self.name)
-        self.players = players(self.name)
+        self.towns = Towns.towns(self.name)
+        self.nations = Nations.nations(self.name)
+        self.players = Players.players(self.name)
 
         self.totalChunks = int(Map.townAreas(self.towns.all()))
         self.totalPlayers = len(self.players.residents.all()) + len(self.players.townless.all())

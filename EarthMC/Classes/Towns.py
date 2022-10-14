@@ -1,6 +1,8 @@
 from ..Utils import FetchError, utilFuncs
 utils = utilFuncs()
 
+from cachetools.func import ttl_cache
+
 class Town:
     def __init__(self, name="", nation="No Nation", mayor="", area=0, x=0, z=0, residents=[], flags={}, colourCodes={}):
         self.name = name
@@ -21,6 +23,8 @@ class Town:
 class towns:
     def __init__(self, map): 
         self.mapName = map
+
+    @ttl_cache(16, 120)
     def all(self):
         townsArray = []
         markerset = {}
@@ -53,7 +57,6 @@ class towns:
             split = info[0].split(" (")
             nationName = (split[1] if len(split) < 3 else split[2])[0:-1]
             residents = info[2][9:].split(", ")
-            area = utils.calcArea(town["x"], town["z"], len(town["x"]))
 
             x = round((max(town["x"]) + min(town["x"])) / 2)
             z = round((max(town["z"]) + min(town["z"])) / 2)
@@ -75,7 +78,7 @@ class towns:
             ct = Town(
                 name=utils.removeStyleCharacters(town['label']),
                 mayor=mayor, 
-                area=area,
+                area=utils.townArea(town),
                 x=x, z=z,
                 residents=residents, 
                 flags=flags,

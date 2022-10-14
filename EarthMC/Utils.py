@@ -1,5 +1,5 @@
-import requests
-import re
+import requests, re
+from cachetools.func import ttl_cache 
 
 from io import StringIO
 from html.parser import HTMLParser
@@ -28,6 +28,7 @@ class utilFuncs:
         try: return req.json()
         except: raise ValueError("Response content is not valid JSON")
 
+    @ttl_cache(2, 300)
     def fetchData(self, type, mapName): return self.reqJSON(self.endpoints[type][mapName])
     
     @staticmethod
@@ -54,21 +55,17 @@ class utilFuncs:
     def removeStyleCharacters(string): return re.sub('/(&amp;.|&[0-9kmnola-z])/g', "", string)
 
     @staticmethod
-    def townArea(town): return utilFuncs.calcArea(town.x, town.z, len(town.x))
-
-    @staticmethod
     def strAsBool(string): return True if string == 'true' else False
 
+    @staticmethod
+    def parseObject(obj): return vars(obj) if type(obj) is not dict else obj
+    @staticmethod
+    def dictToList(dict): return [utilFuncs.parseObject(val) for val in dict.values()]
     @staticmethod
     def listFromDictKey(key): return list(dict.fromkeys(key))
         
     @staticmethod
-    def parseObject(obj): return vars(obj) if type(obj) is not dict else obj
-
-    @staticmethod
-    def dictToList(dict):
-        return [utilFuncs.parseObject(val) for val in dict.values()]
-
+    def townArea(town): return utilFuncs.calcArea(town['x'], town['z'], len(town['x']))
     @staticmethod
     def calcArea(x, z, points, divisor=256):
         area = 0
