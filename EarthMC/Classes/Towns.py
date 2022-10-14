@@ -2,7 +2,7 @@ from ..Utils import FetchError, utilFuncs
 utils = utilFuncs()
 
 class Town:
-    def __init__(self, name="", nation="", mayor="", area=0, x=0, z=0, residents=[], flags={}, colourCodes={}):
+    def __init__(self, name="", nation="No Nation", mayor="", area=0, x=0, z=0, residents=[], flags={}, colourCodes={}):
         self.name = name
         self.nation = nation
         self.mayor = mayor
@@ -73,15 +73,17 @@ class towns:
             }
 
             ct = Town(
-                utils.removeStyleCharacters(town['label']), 
-                'No Nation' if '' else nationName.strip(), 
-                mayor, 
-                area, 
-                x, z,
-                residents, 
-                flags,
-                colourCodes
+                name=utils.removeStyleCharacters(town['label']),
+                mayor=mayor, 
+                area=area,
+                x=x, z=z,
+                residents=residents, 
+                flags=flags,
+                colourCodes=colourCodes
             )
+
+            if (nationName != ''):
+                ct.nation = nationName.strip()
 
             townsArray.append(ct)
             

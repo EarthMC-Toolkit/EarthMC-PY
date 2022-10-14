@@ -58,7 +58,17 @@ class utilFuncs:
 
     @staticmethod
     def strAsBool(string): return True if string == 'true' else False
-    
+
+    @staticmethod
+    def listFromDictKey(key): return list(dict.fromkeys(key))
+        
+    @staticmethod
+    def parseObject(obj): return vars(obj) if type(obj) is not dict else obj
+
+    @staticmethod
+    def dictToList(dict):
+        return [utilFuncs.parseObject(val) for val in dict.values()]
+
     @staticmethod
     def calcArea(x, z, points, divisor=256):
         area = 0

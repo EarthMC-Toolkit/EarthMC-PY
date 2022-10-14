@@ -26,39 +26,40 @@ class nations:
         if foundNation is None: return "Could not find nation '" + nationName + "'" 
         return foundNation
     def all(self):
-        nations = []
         raw = {}
+        output = []
 
         for town in self.towns:
             nationName = town["nation"]
             if nationName == 'No Nation': continue
 
-            existing = raw.get(nationName, None)
-
             # Doesn't already exist, create new nation.
-            if existing == None:
-                existing = raw[nationName] = Nation(nationName)
-                nations.append(vars(existing))
+            if raw.get(nationName, None) == None:
+                raw[nationName] = Nation(
+                    name=nationName,
+                    residents=town['residents'],
+                    towns=[],
+                    area=0
+                )
+
+                output.append(vars(raw[nationName]))
 
             # Add up existing values
             townName = town['name']
-            existing.area += town['area']
+            raw[nationName].area += town['area']
 
-            existing.residents.extend(town['residents'])
-            existing.residents = list(dict.fromkeys(existing.residents))
+            raw[nationName].residents.extend(town['residents'])
+            raw[nationName].residents = utils.listFromDictKey(raw[nationName].residents)
 
-            if existing.name == nationName:
-                existing.towns.append(townName)
-                existing.towns = list(dict.fromkeys(existing.towns))
+            if raw[nationName].name == town['nation']:
+                raw[nationName].towns.append(townName)
 
             if town['flags']['capital'] is True:
-                existing.king = town['mayor']
-                existing.capital = {
+                raw[nationName].king = town['mayor']
+                raw[nationName].capital = {
                     'name': townName,
                     'x': town['x'], 
                     'z': town['z']
                 }
-            
-            raw[nationName] = existing
 
-        return nations
+        return output
