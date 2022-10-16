@@ -21,8 +21,10 @@ class Town:
         return str % list
         
 class towns:
-    def __init__(self, map): 
-        self.mapName = map
+    def __init__(self, mapName):
+        self.mapName = mapName
+        
+        print("Created new 'towns' instance.")
 
     @ttl_cache(16, 120)
     def all(self):

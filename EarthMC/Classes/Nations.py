@@ -17,10 +17,13 @@ class Nation:
         list = (self.name, self.king, self.capital, self.residents, self.towns, self.area)
         return str % list
         
-class nations:
-    def __init__(self, map):
-        #print("Creating new 'nations' instance")
-        self.towns = towns(map).all()
+class nations(towns):
+    def __init__(self, mapName):
+        super().__init__(mapName)
+        self.nations = self
+        self.towns = towns(mapName)
+
+        print("Created new 'nations' instance")
 
     @ttl_cache(4, 120)
     def get(self, nationName, nations=None):
@@ -35,7 +38,7 @@ class nations:
         raw = {}
         output = []
 
-        for town in self.towns:
+        for town in towns.all(self.towns):
             nationName = town["nation"]
             if nationName == 'No Nation': continue
 

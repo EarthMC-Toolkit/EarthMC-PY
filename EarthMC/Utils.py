@@ -47,7 +47,7 @@ class utilFuncs:
 
         return found
 
-    @staticmethod
+    #@staticmethod
     #def intersection(arr1, arr2): return list(filter(lambda x: x in arr1, arr2))
     #def difference(arr1, arr2): return filter(lambda x: x not in arr1, arr2)
 
@@ -66,6 +66,7 @@ class utilFuncs:
         
     @staticmethod
     def townArea(town): return utilFuncs.calcArea(town['x'], town['z'], len(town['x']))
+
     @staticmethod
     def calcArea(x, z, points, divisor=256):
         area = 0

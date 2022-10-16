@@ -17,17 +17,25 @@ class OnlinePlayer:
 class players:
     def __init__(self, map):
         self.playerData = utils.fetchData('players', map)
-        self.towns = towns(map)
+        #self.towns = towns(map)
 
         self.online = self.online(self)
         self.residents = self.residents(self)
         self.townless = self.townless(self)
 
     @ttl_cache(2, 120)
-    def all(self): return self.townless.all() + self.residents.all()
+    def all(self): 
+        names = []
+        names.extend(self.residents.all())
+
+        for pl in self.townless.all():
+            names.append(pl['name'])
+            
+        return names
 
     class residents: 
-        def __init__(self, players): self.towns = players.towns
+        def __init__(self, players):
+            self.towns = players.towns
 
         @ttl_cache(8, 120)
         def all(self):
@@ -38,6 +46,13 @@ class players:
                     output.append(res)
 
             return output
+
+        def get(self, resName, resList=None):
+            if resList is None: resList = self.all()
+            foundRes = utils.find(lambda res: res == resName, resList)
+
+            if foundRes is None: return "Could not find resident '" + resName + "'" 
+            return foundRes    
 
     class townless:
         def __init__(self, players):
@@ -57,7 +72,8 @@ class players:
             return output
 
     class online:
-        def __init__(self, players): self.ops = players.playerData["players"]
+        def __init__(self, players): 
+            self.ops = players.playerData["players"]
 
         @ttl_cache(8, 120)
         def all(self):
