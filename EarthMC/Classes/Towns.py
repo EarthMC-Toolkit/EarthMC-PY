@@ -23,6 +23,7 @@ class Town:
 class towns:
     def __init__(self, mapName):
         self.mapName = mapName
+        self.towns = self
         
         print("Created new 'towns' instance.")
 

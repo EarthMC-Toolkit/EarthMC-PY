@@ -21,7 +21,6 @@ class nations(towns):
     def __init__(self, mapName):
         super().__init__(mapName)
         self.nations = self
-        self.towns = towns(mapName)
 
         print("Created new 'nations' instance")
 

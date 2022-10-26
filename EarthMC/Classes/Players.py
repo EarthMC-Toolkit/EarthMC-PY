@@ -1,7 +1,6 @@
 from ..Utils import utilFuncs
 utils = utilFuncs()
 
-from .Towns import towns
 from cachetools.func import ttl_cache
 
 class OnlinePlayer:
@@ -17,7 +16,6 @@ class OnlinePlayer:
 class players:
     def __init__(self, map):
         self.playerData = utils.fetchData('players', map)
-        #self.towns = towns(map)
 
         self.online = self.online(self)
         self.residents = self.residents(self)
