@@ -3,29 +3,28 @@ from .Classes import Nations
 from .Utils import utilFuncs
 utils = utilFuncs()
 
+from .Classes import Players
+
 class Map(Nations.nations):
     def __init__(self, mapName=''):
         self.name = mapName.lower()
 
         print('Initialising map -> ' + self.name)
-        super().__init__(self.name)
+        super().__init__(self.name) # Initializes self.nations & self.towns
 
         self.mapData = utils.fetchData('map', self.name)
         self.playerData = utils.fetchData('players', self.name)
 
-        #self.towns = Towns.towns(self.name)
-        #self.nations = Nations.nations(self.name)
-        #self.players = Players.players(self.name)
+        self.players = Players.players(self.name, self.towns)
 
-        #self.totalChunks = int(Map.townAreas(self.towns.all()))
-        #self.totalPlayers = len(self.players.residents.all()) + len(self.players.townless.all())
+        self.totalChunks = Map.townAreas(self.towns.all())
+        self.totalPlayers = Map.addAmounts(self.players.residents.all(), self.players.townless.all())
 
     @staticmethod
-    def townAreas(towns): return sum(t['area'] for t in towns)
+    def townAreas(towns): return int(sum(t['area'] for t in towns))
+    def addAmounts(a1, a2): return int((len(a1) + len(a2)))
 
 class Maps():
     @staticmethod
     def Aurora(): return Map('aurora')
-
-    @staticmethod
     def Nova(): return Map('nova')

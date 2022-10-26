@@ -14,8 +14,10 @@ class OnlinePlayer:
         return "Name: %s \nWorld: %s \nX: %s \nY: %s \nZ: %s" % (self.name, self.world, self.x, self.y, self.z)
 
 class players:
-    def __init__(self, map):
+    def __init__(self, map, towns):
         self.playerData = utils.fetchData('players', map)
+
+        self.towns = towns
 
         self.online = self.online(self)
         self.residents = self.residents(self)

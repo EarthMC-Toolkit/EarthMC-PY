@@ -2,6 +2,7 @@ from ..Utils import FetchError, utilFuncs
 utils = utilFuncs()
 
 from cachetools.func import ttl_cache
+from .Players import players
 
 class Town:
     def __init__(self, name="", nation="No Nation", mayor="", area=0, x=0, z=0, residents=[], flags={}, colourCodes={}):
