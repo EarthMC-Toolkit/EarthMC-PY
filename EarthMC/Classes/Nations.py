@@ -19,7 +19,8 @@ class Nation:
         
 class nations(towns):
     def __init__(self, mapName):
-        super().__init__(mapName)
+        #super().__init__(mapName)
+        self.towns = towns(mapName)
         self.nations = self
 
         print("Created new 'nations' instance")
@@ -37,7 +38,7 @@ class nations(towns):
         raw = {}
         output = []
 
-        for town in towns.all(self.towns):
+        for town in self.towns.all():
             nationName = town["nation"]
             if nationName == 'No Nation': continue
 
