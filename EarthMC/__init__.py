@@ -1,21 +1,14 @@
-from .Classes import Nations
+from .Classes.Nations import nations
+from .Classes.Players import players
 
-from .Utils import utilFuncs
-utils = utilFuncs()
-
-from .Classes import Players
-
-class Map(Nations.nations):
+class Map(nations):
     def __init__(self, mapName=''):
         self.name = mapName.lower()
 
         print('Initialising map -> ' + self.name)
-        super().__init__(self.name) # Initializes self.nations & self.towns
+        super().__init__(self.name)
 
-        self.mapData = utils.fetchData('map', self.name)
-        self.playerData = utils.fetchData('players', self.name)
-
-        self.players = Players.players(self.name, self.towns)
+        self.players = players(self.name, self.towns)
 
         self.totalChunks = Map.townAreas(self.towns.all())
         self.totalPlayers = Map.addAmounts(self.players.residents.all(), self.players.townless.all())

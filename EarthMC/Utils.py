@@ -1,5 +1,4 @@
-import requests, re
-from cachetools.func import ttl_cache 
+import re
 
 from io import StringIO
 from html.parser import HTMLParser
@@ -18,19 +17,7 @@ class FetchError(Exception):
     """Raised when there was an error fetching data from Dynmap."""
     pass
 
-class utilFuncs:
-    def __init__(self):
-       self.endpoints = self.reqJSON('https://raw.githubusercontent.com/EarthMC-Toolkit/Toolkit-Website/main/endpoints.json')
-
-    @staticmethod
-    def reqJSON(url):
-        req = requests.get(url)
-        try: return req.json()
-        except: raise ValueError("Response content is not valid JSON")
-
-    @ttl_cache(2, 300)
-    def fetchData(self, type, mapName): return self.reqJSON(self.endpoints[type][mapName])
-    
+class utils:
     @staticmethod
     def striptags(html):
         s = MLStripper()
@@ -60,12 +47,12 @@ class utilFuncs:
     @staticmethod
     def parseObject(obj): return vars(obj) if type(obj) is not dict else obj
     @staticmethod
-    def dictToList(dict): return [utilFuncs.parseObject(val) for val in dict.values()]
+    def dictToList(dict): return [utils.parseObject(val) for val in dict.values()]
     @staticmethod
     def listFromDictKey(key): return list(dict.fromkeys(key))
         
     @staticmethod
-    def townArea(town): return utilFuncs.calcArea(town['x'], town['z'], len(town['x']))
+    def townArea(town): return utils.calcArea(town['x'], town['z'], len(town['x']))
 
     @staticmethod
     def calcArea(x, z, points, divisor=256):

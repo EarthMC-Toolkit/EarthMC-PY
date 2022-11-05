@@ -1,5 +1,4 @@
-from ..Utils import utilFuncs
-utils = utilFuncs()
+from ..Utils import utils
 
 from .Towns import towns
 from cachetools.func import ttl_cache
@@ -17,9 +16,8 @@ class Nation:
         list = (self.name, self.king, self.capital, self.residents, self.towns, self.area)
         return str % list
         
-class nations(towns):
+class nations:
     def __init__(self, mapName):
-        #super().__init__(mapName)
         self.towns = towns(mapName)
         self.nations = self
 

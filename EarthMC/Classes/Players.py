@@ -1,7 +1,8 @@
-from ..Utils import utilFuncs
-utils = utilFuncs()
-
+from ..Utils import utils
 from cachetools.func import ttl_cache
+
+from ..DataHandler import Endpoint
+endpoint = Endpoint()
 
 class OnlinePlayer:
     def __init__(self, player):
@@ -15,7 +16,7 @@ class OnlinePlayer:
 
 class players:
     def __init__(self, map, towns):
-        self.playerData = utils.fetchData('players', map)
+        self.playerData = endpoint.fetch('players', map)
 
         self.towns = towns
 

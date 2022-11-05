@@ -1,7 +1,8 @@
-from ..Utils import FetchError, utilFuncs
-utils = utilFuncs()
-
+from ..Utils import FetchError, utils
 from cachetools.func import ttl_cache
+
+from ..DataHandler import Endpoint
+endpoint = Endpoint()
 
 class Town:
     def __init__(self, name="", nation="No Nation", mayor="", area=0, x=0, z=0, residents=[], flags={}, colourCodes={}):
@@ -32,7 +33,7 @@ class towns:
         mapData = None
 
         try: 
-            mapData = utils.fetchData('map', self.mapName)
+            mapData = endpoint.fetch('map', self.mapName)
 
             if mapData is not None: markerset = mapData["sets"]['townyPlugin.markerset']
             else: raise FetchError
@@ -61,7 +62,7 @@ class towns:
 
             x = round((max(town["x"]) + min(town["x"])) / 2)
             z = round((max(town["z"]) + min(town["z"])) / 2)
-                
+            
             flags = {
                 'pvp': utils.strAsBool(info[4][5:]),
                 'mobs': utils.strAsBool(info[5][6:]),
