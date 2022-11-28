@@ -6,9 +6,12 @@ Provides data on people, places and more on the EarthMC Minecraft server.
 $ pip install EarthMC
 ```
 
-## Import Map(s)
+## Initialize Map(s)
 ```py
-from EarthMC import Aurora, Nova
+from EarthMC import Maps
+
+Aurora = Maps.Aurora()
+Nova = Maps.Nova()
 ```
 
 ## Methods
