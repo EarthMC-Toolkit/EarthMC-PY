@@ -1,4 +1,4 @@
-from ..Utils import utils
+from ..Utils import utils, FetchError
 from cachetools.func import ttl_cache
 
 from ..DataHandler import Endpoint
@@ -16,11 +16,9 @@ class OnlinePlayer:
 
 class players:
     def __init__(self, map, towns):
-        self.playerData = endpoint.fetch('players', map)
-
         self.towns = towns
 
-        self.online = self.online(self)
+        self.online = self.online(map)
         self.residents = self.residents(self)
         self.townless = self.townless(self)
 
@@ -73,14 +71,19 @@ class players:
             return output
 
     class online:
-        def __init__(self, players): 
-            self.ops = players.playerData["players"]
+        def __init__(self, map):
+            self.map = map
 
         @ttl_cache(8, 120)
         def all(self):
             output = []
-            
-            for op in self.ops: 
+
+            try: playerData = endpoint.fetch('players', self.map)
+            except FetchError as e: 
+                print(e)
+                return []
+
+            for op in playerData["players"]: 
                 output.append(vars(OnlinePlayer(op)))
 
             return output

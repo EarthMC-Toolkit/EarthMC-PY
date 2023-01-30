@@ -32,13 +32,12 @@ class towns:
         markerset = {}
         mapData = None
 
-        try: 
-            mapData = endpoint.fetch('map', self.mapName)
+        try: mapData = endpoint.fetch('map', self.mapName)
+        except FetchError as e: 
+            print(e)
+            return []
 
-            if mapData is not None: markerset = mapData["sets"]['townyPlugin.markerset']
-            else: raise FetchError
-        except FetchError: print("Error fetching map data! Type is 'None'")
-
+        markerset = mapData["sets"]['townyPlugin.markerset']
         areas = markerset['areas']
         townAreaNames = list(areas.keys())
 
