@@ -5,6 +5,9 @@ Provides data on people, places and more on the EarthMC Minecraft server.
 ```bash
 $ pip install EarthMC
 ```
+### Required supplementary modules
+* `cachetools`
+* `requests`
 
 ## Initialize Map(s)
 ```py
