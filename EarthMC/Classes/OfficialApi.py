@@ -3,7 +3,7 @@ from EarthMC.Utils import utils, FetchError
 from EarthMC.DataHandler import OfficialAPI
 
 class Players:
-    def __init__(self, map, towns):
+    def __init__(self, towns):
         self.towns = towns
         self.online = self.Online(self)
         self.residents = self.Residents(self)
@@ -64,7 +64,6 @@ class Players:
             foundPlayer = utils.find(lambda player: player['name'] == playerName, ops)
             return foundPlayer if foundPlayer else f"Could not find player '{playerName}'"
 
-
 class OnlinePlayer:
     def __init__(self, player):
         self.name = player["account"]
@@ -75,8 +74,6 @@ class OnlinePlayer:
 
     def __repr__(self):
         return f"Name: {self.name}\nWorld: {self.world}\nX: {self.x}\nY: {self.y}\nZ: {self.z}"
-
-
 
 class Town:
     def __init__(self, name="", nation="No Nation", mayor="", area=0, x=0, z=0, residents=[], flags={}, colourCodes={}):
@@ -103,8 +100,6 @@ class Towns:
     @ttl_cache(16, 120)
     def all(self):
         townsArray = []
-        markerset = {}
-        mapData = None
 
         try:
             official_api = OfficialAPI("town")  # Use OfficialAPI for fetching data
@@ -173,7 +168,7 @@ class Towns:
             townsArray.append(ct)
 
         for t in townsArray:
-            if temp.get(t.name, None) == None:
+            if temp.get(t.name, None) is None:
                 temp[t.name] = t
                 cachedTowns.append(utils.parseObject(t))
             else:
@@ -190,7 +185,6 @@ class Towns:
         if foundTown is None:
             return "Could not find town '" + townName + "'"
         return foundTown
-
 
 class Nation:
     def __init__(self, name="", king="", capital="", residents=[], towns=[], area=0):
@@ -266,5 +260,3 @@ class Nations:
                 }
 
         return output
-
-
