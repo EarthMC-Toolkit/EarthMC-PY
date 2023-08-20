@@ -63,8 +63,6 @@ __pypackages__/
 .env
 env/
 
-test.py
-
 # mypy
 .mypy_cache/
 .dmypy.json
@@ -77,3 +75,7 @@ dmypy.json
 .pytype/
 setup.py
 .gitattributes
+
+# Custom
+test.py
+.idea
