@@ -5,7 +5,8 @@ from cachetools.func import ttl_cache
 
 class Endpoint:
     def __init__(self):
-       self.urls = self.reqJSON('https://raw.githubusercontent.com/EarthMC-Toolkit/Toolkit-Website/main/endpoints.json')
+        endpoints = "https://raw.githubusercontent.com/EarthMC-Toolkit/Toolkit-Website/main/endpoints.json"
+        self.urls = self.reqJSON(endpoints)
 
     @ttl_cache(2, 300)
     def fetch(self, type, mapName):
@@ -33,11 +34,8 @@ class OfficialAPI:
 
     def get_info(self):
         response = requests.get(self.url)
-
-        if response.status_code == 200:
-            return response.json()
-        else:
-            return None
+        info = response.json() if response.status_code == 200 else None
+        return info
 
     @classmethod
     def town(cls, item_id):
@@ -50,6 +48,3 @@ class OfficialAPI:
     @classmethod
     def resident(cls, item_id):
         return cls("resident", item_id)
-
-
-
