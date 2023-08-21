@@ -1,6 +1,8 @@
 from .Classes.Nations import nations
 from .Classes.Players import players
 
+from .Classes.OAPI.Town import OAPI_Town
+
 from .DataHandler import OAPI
 from .Utils import utils, FetchError
 
@@ -33,7 +35,7 @@ class _OfficialAPI:
         self.api = OAPI(map)
 
     def town(self, name: str):
-         return self.api.fetch_single('towns', name)
+         return OAPI_Town(self.api.fetch_single('towns', name))
 
     def nation(self, name: str):
         return self.api.fetch_single('nations', name)
