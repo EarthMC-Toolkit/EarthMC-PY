@@ -5,7 +5,20 @@ from ..DataHandler import Endpoint
 endpoint = Endpoint()
 
 class Town:
-    def __init__(self, name="", nation="No Nation", mayor="", area=0, x=0, z=0, residents=[], flags={}, colourCodes={}):
+    def __init__(self,
+        name="", nation="No Nation",
+        mayor="", area=0, x=0, z=0,
+        residents=None, flags=None, colourCodes=None
+    ):
+        if residents is None:
+            residents = []
+
+        if flags is None:
+            flags = {}
+
+        if colourCodes is None:
+            colourCodes = {}
+
         self.name = name
         self.nation = nation
         self.mayor = mayor
@@ -15,12 +28,13 @@ class Town:
         self.residents = residents
         self.flags = flags
         self.colourCodes = colourCodes
+
     def __repr__(self):
         str = "Name: %s \nNation: %s \nMayor: %s \nResidents: %s \nArea: %s \nX: %s \nZ: %s"
         list = (self.name, self.nation, self.mayor, self.residents, self.area, self.x, self.z)
 
         return str % list
-        
+
 class towns:
     def __init__(self, mapName):
         self.mapName = mapName
@@ -29,11 +43,9 @@ class towns:
     @ttl_cache(16, 120)
     def all(self):
         townsArray = []
-        markerset = {}
-        mapData = None
 
         try: mapData = endpoint.fetch('map', self.mapName)
-        except FetchError as e: 
+        except FetchError as e:
             print(e)
             return []
 
@@ -49,9 +61,9 @@ class towns:
 
             for x in rawinfo:
                 info.append(utils.striptags(x))
-     
+
             if "Shop" in info[0]: continue
-    
+
             mayor = info[1][7:]
             if mayor == "": continue
 
@@ -61,7 +73,7 @@ class towns:
 
             x = round((max(town["x"]) + min(town["x"])) / 2)
             z = round((max(town["z"]) + min(town["z"])) / 2)
-            
+
             flags = {
                 'pvp': utils.strAsBool(info[4][5:]),
                 'mobs': utils.strAsBool(info[5][6:]),
@@ -78,32 +90,33 @@ class towns:
 
             ct = Town(
                 name=utils.removeStyleCharacters(town['label']),
-                mayor=mayor, 
+                mayor=mayor,
                 area=utils.townArea(town),
                 x=x, z=z,
-                residents=residents, 
+                residents=residents,
                 flags=flags,
                 colourCodes=colourCodes
             )
 
-            if (nationName != ''):
+            if nationName != '':
                 ct.nation = nationName.strip()
 
             townsArray.append(ct)
-            
+
         cachedTowns = []
         temp = {}
 
         for t in townsArray:
-            if temp.get(t.name, None) == None: 
+            if temp.get(t.name, None) is None:
                 temp[t.name] = t
                 cachedTowns.append(vars(t))
-            else: temp[t.name].area += t.area
+            else:
+                temp[t.name].area += t.area
 
         return cachedTowns
     def get(self, townName, towns=None):
         if towns is None: towns = self.all()
-        foundTown = utils.find(lambda town: town['name'] == townName, towns)
+        foundTown = utils.find(lambda town: town['name'].lower() == townName.lower(), towns)
 
-        if foundTown is None: return "Could not find town '" + townName + "'" 
+        if foundTown is None: return "Could not find town '" + townName + "'"
         return foundTown
