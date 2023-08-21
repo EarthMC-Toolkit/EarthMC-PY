@@ -116,7 +116,7 @@ class towns:
         return cachedTowns
     def get(self, townName, towns=None):
         if towns is None: towns = self.all()
-        foundTown = utils.find(lambda town: town['name'] == townName, towns)
+        foundTown = utils.find(lambda town: town['name'].lower() == townName.lower(), towns)
 
         if foundTown is None: return "Could not find town '" + townName + "'"
         return foundTown

@@ -48,7 +48,7 @@ class players:
 
         def get(self, resName, resList=None):
             if resList is None: resList = self.all()
-            foundRes = utils.find(lambda res: res == resName, resList)
+            foundRes = utils.find(lambda res: res.lower() == resName.lower(), resList)
 
             if foundRes is None: return "Could not find resident '" + resName + "'" 
             return foundRes    
@@ -63,7 +63,7 @@ class players:
             output = []
 
             for p in self.ops:
-                foundRes = utils.find(lambda res: res == p['name'], self.resList)
+                foundRes = utils.find(lambda res: res.lower() == p['name'].lower(), self.resList)
                 if foundRes is not None: continue
                 
                 output.append(p)
@@ -91,7 +91,7 @@ class players:
         def find(self, playerName): return self.get(playerName)
         def get(self, playerName, ops=None):
             if ops is None: ops = self.all()
-            foundPlayer = utils.find(lambda player: player['name'] == playerName, ops)
+            foundPlayer = utils.find(lambda player: player['name'].lower() == playerName.lower(), ops)
         
             if foundPlayer is None: return "Could not find player '" + playerName + "'" 
             return foundPlayer

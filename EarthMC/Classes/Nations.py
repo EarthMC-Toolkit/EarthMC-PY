@@ -34,7 +34,7 @@ class nations:
         if nations is None:
             nations = self.all()
 
-        foundNation = utils.find(lambda n: n['name'] == nationName, nations)
+        foundNation = utils.find(lambda n: n['name'].lower() == nationName.lower(), nations)
         if foundNation is None:
             return "Could not find nation '" + nationName + "'"
 
