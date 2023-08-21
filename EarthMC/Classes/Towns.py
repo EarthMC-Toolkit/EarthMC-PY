@@ -29,8 +29,6 @@ class towns:
     @ttl_cache(16, 120)
     def all(self):
         townsArray = []
-        markerset = {}
-        mapData = None
 
         try: mapData = endpoint.fetch('map', self.mapName)
         except FetchError as e: 
@@ -86,7 +84,7 @@ class towns:
                 colourCodes=colourCodes
             )
 
-            if (nationName != ''):
+            if nationName != '':
                 ct.nation = nationName.strip()
 
             townsArray.append(ct)
@@ -95,7 +93,7 @@ class towns:
         temp = {}
 
         for t in townsArray:
-            if temp.get(t.name, None) == None: 
+            if temp.get(t.name, None) is None:
                 temp[t.name] = t
                 cachedTowns.append(vars(t))
             else: temp[t.name].area += t.area
