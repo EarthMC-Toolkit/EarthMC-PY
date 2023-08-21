@@ -34,9 +34,9 @@ class utils:
 
         return found
 
-    #@staticmethod
-    #def intersection(arr1, arr2): return list(filter(lambda x: x in arr1, arr2))
-    #def difference(arr1, arr2): return filter(lambda x: x not in arr1, arr2)
+    # @staticmethod
+    # def intersection(arr1, arr2): return list(filter(lambda x: x in arr1, arr2))
+    # def difference(arr1, arr2): return filter(lambda x: x not in arr1, arr2)
 
     @staticmethod
     def removeStyleCharacters(string): return re.sub('/(&amp;.|&[0-9kmnola-z])/g', "", string)
@@ -47,10 +47,13 @@ class utils:
     @staticmethod
     def parseObject(obj): return vars(obj) if type(obj) is not dict else obj
     @staticmethod
-    def dictToList(dict): return [utils.parseObject(val) for val in dict.values()]
+    def dictToList(dict):
+        vals = dict.values()
+        return [utils.parseObject(val) for val in vals]
+
     @staticmethod
     def listFromDictKey(key): return list(dict.fromkeys(key))
-        
+
     @staticmethod
     def townArea(town): return utils.calcArea(town['x'], town['z'], len(town['x']))
 
@@ -63,4 +66,4 @@ class utils:
             area += (x[j] + x[i]) * (z[j] - z[i])
             j = i
 
-        return abs(area/2) / divisor    
+        return abs(area/2) / divisor

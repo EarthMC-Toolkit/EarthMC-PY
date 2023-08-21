@@ -13,38 +13,22 @@ class Endpoint:
         return self.reqJSON(self.urls[type][mapName])
 
     @staticmethod
-    def reqJSON(url):
+    def reqJSON(url: str):
         req = requests.get(url)
         try: return req.json()
         except: return FetchError("Error fetching endpoint: " + url + "\nResponse content is not valid JSON!")
 
-class OfficialAPI:
-    def __init__(self, category, item_id):
-        self.category = category
+class OAPI:
+    def __init__(self, map = "aurora"):
+        self.domain = f"https://api.earthmc.net/v1/{map}"
+        self.urls = {
+            "towns": f"{self.domain}/towns",
+            "nations": f"{self.domain}/nations",
+            "residents": f"{self.domain}/residents",
+        }
 
-        # Determine the correct URL based on the chosen category and item ID
-        if category == "town":
-            self.url = f"https://api.earthmc.net/v2/aurora/town/{item_id}"
-        elif category == "nation":
-            self.url = f"https://api.earthmc.net/v2/aurora/nation/{item_id}"
-        elif category == "resident":
-            self.url = f"https://api.earthmc.net/v2/aurora/resident/{item_id}"
-        else:
-            raise ValueError("Invalid category")
+    def fetch_single(self, type: str, item = ''):
+        return Endpoint.reqJSON(self.urls[type] + "/" + item)
 
-    def get_info(self):
-        response = requests.get(self.url)
-        info = response.json() if response.status_code == 200 else None
-        return info
-
-    @classmethod
-    def town(cls, item_id):
-        return cls("town", item_id)
-
-    @classmethod
-    def nation(cls, item_id):
-        return cls("nation", item_id)
-
-    @classmethod
-    def resident(cls, item_id):
-        return cls("resident", item_id)
+    def fetch_all(self, type: str):
+        return Endpoint.reqJSON(self.urls[type])
