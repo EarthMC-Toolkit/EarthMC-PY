@@ -27,6 +27,7 @@ class OAPI:
             "residents": f"{self.domain}/residents",
         }
 
+    @ttl_cache(2, 5) # Cache it for 5 seconds to avoid spamming API.
     def fetch_single(self, type: str, item = ''):
         return Endpoint.reqJSON(self.urls[type] + "/" + item)
 

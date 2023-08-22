@@ -1,17 +1,19 @@
-from .Classes.Nations import nations
-from .Classes.Players import players
-
-from .DataHandler import OAPI
 from .Utils import utils, FetchError
 
-class Map(nations):
+from .Classes import Nations
+from .Classes import Players
+
+from .Classes.OAPI import OAPI_Town, OAPI_Nation, OAPI_Player
+from .DataHandler import OAPI
+
+class Map(Nations):
     def __init__(self, mapName=''):
         self.name = mapName.lower()
 
         print('Initialising map -> ' + self.name)
         super().__init__(self.name)
 
-        self.players = players(self.name, self.towns)
+        self.players = Players(self.name, self.towns)
 
         self.totalChunks = Map.townAreas(self.towns.all())
         self.totalPlayers = Map.addAmounts(self.players.residents.all(), self.players.townless.all())
@@ -33,13 +35,13 @@ class _OfficialAPI:
         self.api = OAPI(map)
 
     def town(self, name: str):
-         return self.api.fetch_single('towns', name)
+         return OAPI_Town(self.api.fetch_single('towns', name))
 
     def nation(self, name: str):
-        return self.api.fetch_single('nations', name)
+        return OAPI_Nation(self.api.fetch_single('nations', name))
 
     def player(self, name: str):
-        return self.api.fetch_single('players', name)
+        return OAPI_Player(self.api.fetch_single('players', name))
 
     # class Players:
     #     def __init__(self, api: OAPI):
@@ -53,6 +55,5 @@ class _OfficialAPI:
     #             playerArr.append(self.api.fetch_single('residents', player))
     #
     #         return playerArr
-
 
 OfficialAPI = _OfficialAPI()
