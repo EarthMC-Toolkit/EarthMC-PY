@@ -41,7 +41,7 @@ class _OfficialAPI:
         return OAPI_Nation(self.api.fetch_single('nations', name))
 
     def player(self, name: str):
-        return OAPI_Player(self.api.fetch_single('players', name))
+        return OAPI_Player(self.api.fetch_single('residents', name))
 
     # class Players:
     #     def __init__(self, api: OAPI):
