@@ -3,6 +3,13 @@ import re
 from io import StringIO
 from html.parser import HTMLParser
 
+class AutoRepr(object):
+    def __repr__(self):
+        return '{}({})'.format(
+            self.__class__.__name__,
+            ', '.join('{}={!r}'.format(k, v) for k, v in self.__dict__.items())
+        )
+
 class MLStripper(HTMLParser):
     def __init__(self):
         super().__init__()

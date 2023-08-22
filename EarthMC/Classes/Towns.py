@@ -1,10 +1,10 @@
-from ..Utils import FetchError, utils
+from ..Utils import FetchError, utils, AutoRepr
 from cachetools.func import ttl_cache
 
 from ..DataHandler import Endpoint
 endpoint = Endpoint()
 
-class Town:
+class Town(AutoRepr):
     def __init__(self,
         name="", nation="No Nation",
         mayor="", area=0, x=0, z=0,
@@ -28,12 +28,6 @@ class Town:
         self.residents = residents
         self.flags = flags
         self.colourCodes = colourCodes
-
-    def __repr__(self):
-        str = "Name: %s \nNation: %s \nMayor: %s \nResidents: %s \nArea: %s \nX: %s \nZ: %s"
-        list = (self.name, self.nation, self.mayor, self.residents, self.area, self.x, self.z)
-
-        return str % list
 
 class towns:
     def __init__(self, mapName):
@@ -114,6 +108,7 @@ class towns:
                 temp[t.name].area += t.area
 
         return cachedTowns
+
     def get(self, townName, towns=None):
         if towns is None: towns = self.all()
         foundTown = utils.find(lambda town: town['name'].lower() == townName.lower(), towns)

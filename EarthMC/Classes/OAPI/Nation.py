@@ -1,4 +1,7 @@
-class OAPI_Nation:
+from EarthMC.Utils import AutoRepr
+
+
+class OAPI_Nation(AutoRepr):
     def __init__(self, data):
         timestamps = data['timestamps']
         stats = data['stats']
@@ -23,12 +26,3 @@ class OAPI_Nation:
         self.enemies = data['enemies']
         self.color = strings['mapColorHexCode']
 
-    def __repr__(self):
-        str_template = (
-            "Name: %s \nKing: %s \nCapital: %s \nResidents: %s \nArea: %s \nTowns: %s \n"
-        )
-        info_list = (
-            self.name, self.king, self.capital, self.residents, self.area, self.towns
-        )
-
-        return str_template % info_list

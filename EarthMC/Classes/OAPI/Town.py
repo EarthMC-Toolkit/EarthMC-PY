@@ -1,4 +1,6 @@
-class OAPI_Town:
+from EarthMC.Utils import AutoRepr
+
+class OAPI_Town(AutoRepr):
     def __init__(self, data):
         timestamps = data['timestamps']
         status = data['status']
@@ -36,9 +38,3 @@ class OAPI_Town:
 
         self.flags = perms['flagPerms']
         self.ranks = data['ranks']
-
-    def __repr__(self):
-        str = "Name: %s \nNation: %s \nMayor: %s \nResidents: %s \nArea: %s \nX: %s \nZ: %s"
-        list = (self.name, self.nation, self.mayor, self.residents, self.area, self.x, self.z)
-
-        return str % list

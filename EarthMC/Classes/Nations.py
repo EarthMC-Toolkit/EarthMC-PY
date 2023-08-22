@@ -1,9 +1,9 @@
-from ..Utils import utils
+from ..Utils import utils, AutoRepr
 
 from .Towns import towns
 from cachetools.func import ttl_cache
 
-class Nation:
+class Nation(AutoRepr):
     def __init__(self, name="", king="", capital="", residents=None, towns=None, area=0):
         if towns is None:
             towns = []
@@ -17,10 +17,6 @@ class Nation:
         self.residents = residents
         self.towns = towns
         self.area = area
-    def __repr__(self):
-        str = "Name: %s \nKing: %s \nCapital: %s \nResidents: %s \nTowns: %s \nArea: %s \n"
-        list = (self.name, self.king, self.capital, self.residents, self.towns, self.area)
-        return str % list
 
 class nations:
     def __init__(self, mapName):

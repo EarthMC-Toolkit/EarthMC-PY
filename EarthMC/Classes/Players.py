@@ -1,18 +1,16 @@
-from ..Utils import utils, FetchError
+from ..Utils import utils, FetchError, AutoRepr
 from cachetools.func import ttl_cache
 
 from ..DataHandler import Endpoint
 endpoint = Endpoint()
 
-class OnlinePlayer:
+class OnlinePlayer(AutoRepr):
     def __init__(self, player):
         self.name = player["account"]
         self.world = player["world"]
         self.x = player["x"]
         self.y = player["y"]
         self.z = player["z"]
-    def __repr__(self):
-        return "Name: %s \nWorld: %s \nX: %s \nY: %s \nZ: %s" % (self.name, self.world, self.x, self.y, self.z)
 
 class players:
     def __init__(self, map, towns):
@@ -89,6 +87,7 @@ class players:
             return output
 
         def find(self, playerName): return self.get(playerName)
+
         def get(self, playerName, ops=None):
             if ops is None: ops = self.all()
             foundPlayer = utils.find(lambda player: player['name'].lower() == playerName.lower(), ops)
