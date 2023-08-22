@@ -5,9 +5,6 @@ Provides data on people, places and more on the EarthMC Minecraft server.
 ```bash
 $ pip install EarthMC
 ```
-### Required supplementary modules
-* `cachetools`
-* `requests`
 
 ## Initialize Map(s)
 ```py
@@ -24,7 +21,7 @@ Nova = Maps.Nova()
 
 #### **Base Reference**
 ```py 
-ap = Aurora.players
+ap = Aurora.Players
 print(ap.all()) # => Outputs all players. (Townless and Residents)
 ```
 
@@ -42,3 +39,17 @@ tp = ap.townless.get('PlayerName')
 res = ap.residents.get('ResidentName') 
 ```
 </p>
+</details>
+
+## Official API
+Similarly to the [EarthMC NPM](https://github.com/EarthMC-Toolkit/EarthMC-NPM) library, 
+it is possible to send calls to EarthMC's [Official API](https://earthmc.net/docs/api).<br>
+This includes Towny data like balances, timestamps, perms, ranks and more.
+
+```py
+from EarthMC import OfficialAPI
+
+town = OfficialAPI.town('venice')
+nation = OfficialAPI.nation('venice')
+player = OfficialAPI.player('fix') 
+```

@@ -14,7 +14,7 @@ class OnlinePlayer(AutoRepr):
 
 class players:
     def __init__(self, map, towns):
-        self.towns = towns
+        self.Towns = towns
 
         self.online = self.online(map)
         self.residents = self.residents(self)
@@ -32,13 +32,13 @@ class players:
 
     class residents: 
         def __init__(self, players):
-            self.towns = players.towns
+            self.Towns = players.Towns
 
         @ttl_cache(8, 120)
         def all(self):
             output = []
             
-            for t in self.towns.all():
+            for t in self.Towns.all():
                 for res in t['residents']:
                     output.append(res)
 

@@ -20,8 +20,8 @@ class Nation(AutoRepr):
 
 class nations:
     def __init__(self, mapName):
-        self.towns = towns(mapName)
-        self.nations = self
+        self.Towns = towns(mapName)
+        self.Nations = self
 
         print("Created new 'nations' instance")
 
@@ -41,7 +41,7 @@ class nations:
         raw = {}
         output = []
 
-        for town in self.towns.all():
+        for town in self.Towns.all():
             nationName = town["nation"]
             if nationName == 'No Nation':
                 continue
