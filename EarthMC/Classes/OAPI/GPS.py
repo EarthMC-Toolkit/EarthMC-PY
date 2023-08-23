@@ -50,7 +50,7 @@ class Gps:
             destination = self.fetch_towns(town)
         elif isinstance(nation, str):
             destination = self.fetch_nations(nation)
- 
+
         if destination and player_location:
             distance = self.calculate_manhattan_distance(player_location, destination)
             return distance
