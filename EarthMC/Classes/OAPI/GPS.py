@@ -1,4 +1,6 @@
-from EarthMC.DataHandler import *
+import requests
+import re
+from EarthMC.DataHandler import OAPI
 from cachetools.func import ttl_cache
 
 class Gps:
@@ -17,17 +19,24 @@ class Gps:
             if match:
                 player_data['name'] = player_name
                 player_data['location'] = match.group(1).strip()
-                return player_data  # Return the fetched player data
+                return player_data
 
         except requests.exceptions.RequestException as e:
             print("Error fetching data:", e)
-            return None  # Return None in case of error
+            return None
+
+    def parse_location_coordinates(self, location_string):
+        match = re.search(r'x=(-?\d+)&y=(-?\d+)', location_string)
+        if match:
+            x, y = int(match.group(1)), int(match.group(2))
+            return x, y
+        return None
 
     def fetch_towns(self, name):
         towns = OAPI.fetch_all(type="nations")
         town = towns.get(name)
         if town:
-            town_spawn = town['spawn']
+            town_spawn = self.parse_location_coordinates(town['spawn'])
             return town_spawn
         return None
 
@@ -35,7 +44,7 @@ class Gps:
         nations = OAPI.fetch_all(type="nations")
         nation = nations.get(name)
         if nation:
-            nation_spawn = nation['spawn']
+            nation_spawn = self.parse_location_coordinates(nation['spawn'])
             return nation_spawn
         return None
 
@@ -43,9 +52,14 @@ class Gps:
         x1, y1 = point1
         x2, y2 = point2
         return abs(x2 - x1) + abs(y2 - y1)
-    def shortest_route(self, nation_spawn, town_spawn, player_name='', town='', nation=''):
 
-        player_location = self.fetch_players(player_name)['location']
+    def shortest_route(self, player_name='', town='', nation=''):
+        player_data = self.fetch_players(player_name)
+        if not player_data:
+            return None
+
+        player_location = self.parse_location_coordinates(player_data['location'])
+
         if isinstance(town, str):
             destination = self.fetch_towns(town)
         elif isinstance(nation, str):
@@ -54,5 +68,4 @@ class Gps:
         if destination and player_location:
             distance = self.calculate_manhattan_distance(player_location, destination)
             return distance
-
-
+        return None
