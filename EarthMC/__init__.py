@@ -2,7 +2,7 @@ from .Utils import utils, FetchError
 
 from .Classes import Nations
 from .Classes import Players
-from .Classes import GPS
+from .Classes.GPS import GPS
 from .Classes.OAPI import OAPI_Town, OAPI_Nation, OAPI_Player
 from .DataHandler import OAPI
 
@@ -12,9 +12,9 @@ class Map(Nations):
 
         print('Initialising map -> ' + self.name)
         super().__init__(self.name)
-        self.GPS = GPS.Gps()
 
         self.Players = Players(self.name, self.Towns)
+        self.GPS = GPS()
 
         self.totalChunks = Map.townAreas(self.Towns.all())
         self.totalPlayers = Map.addAmounts(self.Players.residents.all(), self.Players.townless.all())
@@ -43,18 +43,5 @@ class _OfficialAPI:
 
     def player(self, name: str):
         return OAPI_Player(self.api.fetch_single('residents', name))
-
-    # class Players:
-    #     def __init__(self, api: OAPI):
-    #         self.api = api
-    #
-    #     def all(self):
-    #         playerArr = []
-    #         playerList = self.api.fetch_all('residents')
-    #
-    #         for player in playerList['allResidents']:
-    #             playerArr.append(self.api.fetch_single('residents', player))
-    #
-    #         return playerArr
 
 OfficialAPI = _OfficialAPI()

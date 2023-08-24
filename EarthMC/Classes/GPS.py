@@ -1,9 +1,8 @@
 import requests
 import re
 from EarthMC.DataHandler import OAPI
-from cachetools.func import ttl_cache
 
-class Gps():
+class GPS:
     def __init__(self):
         self.url_player = f'https://earthmc.net/map/aurora/standalone/MySQL_update.php?world=earth'
 
@@ -43,9 +42,11 @@ class Gps():
     def fetch_nations(self, name):
         nations = OAPI.fetch_all(type="nations")
         nation = nations.get(name)
+
         if nation:
             nation_spawn = self.parse_location_coordinates(nation['spawn'])
             return nation_spawn
+
         return None
 
     def calculate_manhattan_distance(self, point1, point2):
@@ -59,6 +60,7 @@ class Gps():
             return None
 
         player_location = self.parse_location_coordinates(player_data['location'])
+        destination = None
 
         if isinstance(town, str):
             destination = self.fetch_towns(town)
@@ -68,4 +70,5 @@ class Gps():
         if destination and player_location:
             distance = self.calculate_manhattan_distance(player_location, destination)
             return distance
+
         return None
