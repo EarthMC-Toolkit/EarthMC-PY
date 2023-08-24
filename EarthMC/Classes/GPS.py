@@ -5,7 +5,15 @@ from cachetools.func import ttl_cache
 
 class Gps():
     def __init__(self):
-        self.url_player = f'https://earthmc.net/map/aurora/standalone/MySQL_update.php?world=earth'
+        map =self.url_player = f'https://earthmc.net/map/aurora/standalone/MySQL_update.php?world=earth'
+        if map == 'aurora':
+            self.url_player = f'https://earthmc.net/map/aurora/standalone/MySQL_update.php?world=earth'
+        elif map == 'nova':
+            self.url_player = f'https://earthmc.net/map/nova/standalone/MySQL_update.php?world=earth'
+        else :
+            self.url_player = f'https://earthmc.net/map/aurora/standalone/MySQL_update.php?world=earth'
+
+
 
     def fetch_players(self, player_name):
         try:
