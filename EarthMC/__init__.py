@@ -2,7 +2,7 @@ from .Utils import utils, FetchError
 
 from .Classes import Nations
 from .Classes import Players
-
+from .Classes import GPS
 from .Classes.OAPI import OAPI_Town, OAPI_Nation, OAPI_Player
 from .DataHandler import OAPI
 
@@ -12,6 +12,7 @@ class Map(Nations):
 
         print('Initialising map -> ' + self.name)
         super().__init__(self.name)
+        self.GPS = GPS.Gps()
 
         self.Players = Players(self.name, self.Towns)
 

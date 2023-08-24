@@ -3,7 +3,7 @@ import re
 from EarthMC.DataHandler import OAPI
 from cachetools.func import ttl_cache
 
-class Gps:
+class Gps():
     def __init__(self):
         self.url_player = f'https://earthmc.net/map/aurora/standalone/MySQL_update.php?world=earth'
 
