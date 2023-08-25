@@ -14,10 +14,10 @@ class Map(Nations):
         super().__init__(self.name)
 
         self.Players = Players(self.name, self.Towns)
-        self.GPS = GPS()
-
         self.totalChunks = Map.townAreas(self.Towns.all())
         self.totalPlayers = Map.addAmounts(self.Players.residents.all(), self.Players.townless.all())
+        
+        self.GPS = GPS(self)
 
     @staticmethod
     def townAreas(towns): return int(sum(t['area'] for t in towns))
