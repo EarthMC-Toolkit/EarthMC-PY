@@ -1,8 +1,8 @@
 from EarthMC import Maps
 import math
 
-Aurora = Maps.Aurora()
-Nova = Maps.Nova()
+aurora_map = Maps.Aurora()
+nova_map = Maps.Nova()
 
 class Location:
     def __init__(self, x, z):
@@ -11,50 +11,50 @@ class Location:
 
 class GPS:
     def __init__(self):
-        self.map_aurora = Aurora()
-        self.map_nova = Nova()
+        self.aurora_map = aurora_map
+        self.nova_map = nova_map
 
-    def fetch_town(self, town_name, map_name):
+    def fetch_location_town(self, location_name, map_name):
         if map_name.lower() == 'aurora':
-            town = self.map_aurora.Towns.get(town_name)
+            location = self.aurora_map.Towns.get(location_name)
         elif map_name.lower() == 'nova':
-            town = self.map_nova.Towns.get(town_name)
+            location = self.nova_map.Towns.get(location_name)
         else:
             return 'map didnt match any maps'
 
-        if town:
-            town_spawn = Location(town['x'], town['z'])
-            global town_spawn
+        if location:
+            location_spawn = Location(location['x'], location['z'])
+            global location_spawn
 
         return None
 
-    def fetch_nation(self, nation_name, map_name):
+    def fetch_location_nation(self, location_name, map_name):
         if map_name.lower() == 'aurora':
-            nation = self.map_aurora.Nations.get(nation_name)
+            location = self.aurora_map.Nations.get(location_name)
         elif map_name.lower() == 'nova':
-            nation = self.map_nova.Nations.get(nation_name)
+            location = self.nova_map.Nations.get(location_name)
         else:
             return 'map didnt match any maps'
 
-        if nation:
-            capital = nation['capital']
-            pvp = nation['pvp']
-            public = nation['public']
+        if location:
+            capital = location['capital']
+            pvp = location['pvp']
+            public = location['public']
 
-            nation_spawn = Location(capital['x'], capital['z'])
-            global nation_spawn
+            location_spawn = Location(capital['x'], capital['z'])
+            global location_spawn
 
         return None
 
     @staticmethod
-    def manhattan(loc1, loc2):
+    def manhattan_distance(loc1, loc2):
         return abs(loc2.x - loc1.x) + abs(loc2.z - loc2.z)
 
-    def fastest_route(self, player_name='', town='', nation='', map_name=''):
+    def find_fastest_route(self, player_name='', town='', nation='', map_name=''):
         if map_name.lower() == 'aurora':
-            player = self.map_aurora.Players.get(player_name)
+            player = self.aurora_map.Players.get(player_name)
         elif map_name.lower() == 'nova':
-            player = self.map_nova.Players.get(player_name)
+            player = self.nova_map.Players.get(player_name)
         else:
             return 'map didnt match any maps'
 
@@ -65,23 +65,23 @@ class GPS:
         destination = None
 
         if isinstance(town, str):
-            destination = self.fetch_town(town, map_name)
+            destination = self.fetch_location_town(town, map_name)
         elif isinstance(nation, str):
-            destination = self.fetch_nation(nation, map_name)
+            destination = self.fetch_location_nation(nation, map_name)
 
         if destination and player_location and nation:
-            distance = GPS.manhattan(player_location, destination)
-            return f"nation:\n{nation}\nlocation: {nation_spawn}\ndistance: {distance}"
+            distance = GPS.manhattan_distance(player_location, destination)
+            return f"nation:\n{nation}\nlocation: {location_spawn}\ndistance: {distance}"
 
         if destination and player_location and town:
-            distance = GPS.manhattan(player_location, destination)
-            return f"town: {town}\nlocation: {town_spawn}\ndistance: {distance}"
+            distance = GPS.manhattan_distance(player_location, destination)
+            return f"town: {town}\nlocation: {location_spawn}\ndistance: {distance}"
 
         return None
 
-    def safest_route(self, loc):
-        nations = self.map_aurora.Nations.all() + self.map_nova.Nations.all()
-        towns = self.map_aurora.Towns.all() + self.map_nova.Towns.all()
+    def find_safest_route(self, loc):
+        nations = self.aurora_map.Nations.all() + self.nova_map.Nations.all()
+        towns = self.aurora_map.Towns.all() + self.nova_map.Towns.all()
         filtered = []
 
         for nation in nations:
@@ -95,7 +95,7 @@ class GPS:
         min_distance, closest_nation = float('inf'), None
 
         for nation in filtered:
-            dist = self.manhattan(nation['capital']['x'], nation['capital']['z'], loc.x, loc.z)
+            dist = self.manhattan_distance(nation['capital']['x'], nation['capital']['z'], loc.x, loc.z)
 
             if dist < min_distance:
                 min_distance = dist
@@ -104,11 +104,11 @@ class GPS:
                     'capital': nation['capital']
                 }
 
-        direction = self.cardinal_direction(closest_nation['capital'], loc)
+        direction = self.calculate_cardinal_direction(closest_nation['capital'], loc)
         return {'nation': closest_nation, 'distance': round(min_distance), 'direction': direction}
 
     @staticmethod
-    def cardinal_direction(loc1, loc2):
+    def calculate_cardinal_direction(loc1, loc2):
         delta_x = loc2.x - loc1['x']
         delta_z = loc2.z - loc1['z']
 
