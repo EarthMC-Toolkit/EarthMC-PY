@@ -1,8 +1,7 @@
 import requests
-import json
-import re
-from .Utils import FetchError
 from cachetools.func import ttl_cache
+
+from .Utils import FetchError
 
 class Endpoint:
     def __init__(self):
