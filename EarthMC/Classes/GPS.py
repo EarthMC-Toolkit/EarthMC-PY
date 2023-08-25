@@ -1,74 +1,52 @@
-import requests
-import re
-from EarthMC.DataHandler import OAPI
+from EarthMC import Map
+
+class Location:
+    def __init__(self, x: int, z: int):
+        self.x = x
+        self.z = z
 
 class GPS:
-    def __init__(self):
-        self.url_player = f'https://earthmc.net/map/aurora/standalone/MySQL_update.php?world=earth'
+    def __init__(self, map: Map):
+        self.map = map
 
-    def fetch_players(self, player_name):
-        try:
-            response = requests.get(self.url_player)
-            response.raise_for_status()
-            player_data = {}
+    def fetch_town(self, town_name: str):
+        town = self.map.Towns.get(town_name)
 
-            pattern = f'<div class="player-info".*?name="{player_name}"[^>]*>(.*?)</div>'
-            match = re.search(pattern, response.text, re.DOTALL)
-
-            if match:
-                player_data['name'] = player_name
-                player_data['location'] = match.group(1).strip()
-                return player_data
-
-        except requests.exceptions.RequestException as e:
-            print("Error fetching data:", e)
-            return None
-
-    def parse_location_coordinates(self, location_string):
-        match = re.search(r'x=(-?\d+)&y=(-?\d+)', location_string)
-        if match:
-            x, y = int(match.group(1)), int(match.group(2))
-            return x, y
-        return None
-
-    def fetch_towns(self, name):
-        towns = OAPI.fetch_all(type="nations")
-        town = towns.get(name)
         if town:
-            town_spawn = self.parse_location_coordinates(town['spawn'])
+            town_spawn = Location(town['x'], town['z'])
             return town_spawn
+
         return None
 
-    def fetch_nations(self, name):
-        nations = OAPI.fetch_all(type="nations")
-        nation = nations.get(name)
+    def fetch_nation(self, nation_name: str):
+        nation = self.map.Nations.get(nation_name)
 
         if nation:
-            nation_spawn = self.parse_location_coordinates(nation['spawn'])
+            capital = nation['capital']
+            nation_spawn = Location(capital['x'], capital['z'])
             return nation_spawn
 
         return None
 
-    def calculate_manhattan_distance(self, point1, point2):
-        x1, y1 = point1
-        x2, y2 = point2
-        return abs(x2 - x1) + abs(y2 - y1)
+    @staticmethod
+    def manhattan(loc1, loc2):
+        return abs(loc2.x - loc1.x) + abs(loc2.z - loc2.z)
 
-    def shortest_route(self, player_name='', town='', nation=''):
-        player_data = self.fetch_players(player_name)
-        if not player_data:
+    def fastest_route(self, player_name='', town='', nation=''):
+        player = self.map.Players.get(player_name)
+        if not player:
             return None
 
-        player_location = self.parse_location_coordinates(player_data['location'])
+        player_location = Location(player['x'], player['z'])
         destination = None
 
         if isinstance(town, str):
-            destination = self.fetch_towns(town)
+            destination = self.fetch_town(town)
         elif isinstance(nation, str):
-            destination = self.fetch_nations(nation)
+            destination = self.fetch_nation(nation)
 
         if destination and player_location:
-            distance = self.calculate_manhattan_distance(player_location, destination)
+            distance = GPS.manhattan(player_location, destination)
             return distance
 
         return None
