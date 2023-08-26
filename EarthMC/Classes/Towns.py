@@ -1,6 +1,6 @@
 from ..Utils import FetchError, utils, AutoRepr
 from cachetools.func import ttl_cache
-import math
+
 from ..DataHandler import Endpoint
 endpoint = Endpoint()
 
@@ -29,44 +29,40 @@ class Town(AutoRepr):
         self.flags = flags
         self.colourCodes = colourCodes
 
-
-class Towns:
-    def __init__(self, map_name):
-        self.map_name = map_name
-        print("Created new 'Towns' instance.")
+class towns:
+    def __init__(self, mapName):
+        self.mapName = mapName
+        print("Created new 'towns' instance.")
 
     @ttl_cache(16, 120)
     def all(self):
-        towns_array = []
+        townsArray = []
 
-        try:
-            map_data = endpoint.fetch('map', self.map_name)
+        try: mapData = endpoint.fetch('map', self.mapName)
         except FetchError as e:
             print(e)
             return []
 
-        markerset = map_data["sets"]['townyPlugin.markerset']
+        markerset = mapData["sets"]['townyPlugin.markerset']
         areas = markerset['areas']
-        town_area_names = list(areas.keys())
+        townAreaNames = list(areas.keys())
 
-        for i in range(len(town_area_names)):
-            town = areas[town_area_names[i]]
-            raw_info = town["desc"].split("<br />")
+        for i in range(len(townAreaNames)):
+            town = areas[townAreaNames[i]]
+            rawinfo = town["desc"].split("<br />")
 
             info = []
 
-            for x in raw_info:
+            for x in rawinfo:
                 info.append(utils.striptags(x))
 
-            if "Shop" in info[0]:
-                continue
+            if "Shop" in info[0]: continue
 
             mayor = info[1][7:]
-            if mayor == "":
-                continue
+            if mayor == "": continue
 
             split = info[0].split(" (")
-            nation_name = (split[1] if len(split) < 3 else split[2])[0:-1]
+            nationName = (split[1] if len(split) < 3 else split[2])[0:-1]
             residents = info[2][9:].split(", ")
 
             x = round((max(town["x"]) + min(town["x"])) / 2)
@@ -96,43 +92,26 @@ class Towns:
                 colourCodes=colourCodes
             )
 
-            if nation_name != '':
-                ct.nation = nation_name.strip()
+            if nationName != '':
+                ct.nation = nationName.strip()
 
-            towns_array.append(ct)
+            townsArray.append(ct)
 
-        cached_towns = []
+        cachedTowns = []
         temp = {}
 
-        for t in towns_array:
+        for t in townsArray:
             if temp.get(t.name, None) is None:
                 temp[t.name] = t
-                cached_towns.append(vars(t))
+                cachedTowns.append(vars(t))
             else:
                 temp[t.name].area += t.area
 
-        return cached_towns
+        return cachedTowns
 
-    def get(self, town_name, towns=None):
-        if towns is None:
-            towns = self.all()
-        found_town = utils.find(lambda town: town['name'].lower() == town_name.lower(), towns)
+    def get(self, townName, towns=None):
+        if towns is None: towns = self.all()
+        foundTown = utils.find(lambda town: town['name'].lower() == townName.lower(), towns)
 
-        if found_town is None:
-            return "Could not find town '" + town_name + "'"
-        return found_town
-
-    def nearby(self, x_input, z_input, x_radius, z_radius, towns=None):
-        if towns is None:
-            towns = self.all()
-
-        filtered_towns = []
-        for t in towns:
-            distance_x = t['x'] - x_input
-            distance_z = t['z'] - z_input
-
-            if -x_radius <= distance_x <= x_radius and -z_radius <= distance_z <= z_radius:
-                filtered_towns.append(t)
-
-        return filtered_towns if filtered_towns else []
-
+        if foundTown is None: return "Could not find town '" + townName + "'"
+        return foundTown

@@ -1,5 +1,6 @@
 from EarthMC.Utils import AutoRepr
 
+
 class OAPI_Nation(AutoRepr):
     def __init__(self, data):
         timestamps = data['timestamps']
@@ -26,3 +27,4 @@ class OAPI_Nation(AutoRepr):
         self.allies = data['allies']
         self.enemies = data['enemies']
         self.color = strings['mapColorHexCode']
+
