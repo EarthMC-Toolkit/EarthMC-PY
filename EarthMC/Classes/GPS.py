@@ -8,15 +8,10 @@ class Location:
 
 class GPS:
     def __init__(self, map: Map):
-        self.map = map
+        self.map = map # The parent Map the GPS was set up on.
 
-    def fetch_location_town(self, location_name, map_name):
-        if map_name.lower() == 'aurora':
-            location = self.map.Towns.get(location_name)
-        elif map_name.lower() == 'nova':
-            location = self.map.Towns.get(location_name)
-        else:
-            return 'map didnt match any maps'
+    def fetch_location_town(self, town_name):
+        location = self.map.Towns.get(town_name)
 
         if location:
             location_spawn = Location(location['x'], location['z'])
@@ -24,11 +19,13 @@ class GPS:
 
         return None
 
-    def fetch_location_nation(self, location_name, map_name):
-        location = self.map.Nations.get(location_name)
+    def fetch_location_nation(self, nation_name):
+        location = self.map.Nations.get(nation_name)
 
         if location:
             capital = location['capital']
+
+            # Both unused?
             pvp = location['pvp']
             public = location['public']
 
@@ -41,7 +38,7 @@ class GPS:
     def manhattan_distance(loc1, loc2):
         return abs(loc2.x - loc1.x) + abs(loc2.z - loc2.z)
 
-    def find_fastest_route(self, player_name='', town='', nation='', map_name=''):
+    def find_fastest_route(self, player_name='', town='', nation=''):
         player = self.map.Players.get(player_name)
 
         if not player:
@@ -51,9 +48,9 @@ class GPS:
         destination = None
 
         if isinstance(town, str):
-            destination = self.fetch_location_town(town, map_name)
+            destination = self.fetch_location_town(town)
         elif isinstance(nation, str):
-            destination = self.fetch_location_nation(nation, map_name)
+            destination = self.fetch_location_nation(nation)
 
         if destination and player_location and nation:
             distance = GPS.manhattan_distance(player_location, destination)
@@ -82,17 +79,22 @@ class GPS:
         min_distance, closest_nation = float('inf'), None
 
         for nation in filtered:
-            dist = self.manhattan_distance(nation['capital']['x'], nation['capital']['z'], loc.x, loc.z)
+            capital = nation['capital']
+            dist = GPS.manhattan_distance(capital, loc)
 
             if dist < min_distance:
                 min_distance = dist
                 closest_nation = {
                     'name': nation['name'],
-                    'capital': nation['capital']
+                    'capital': capital
                 }
 
-        direction = self.calculate_cardinal_direction(closest_nation['capital'], loc)
-        return {'nation': closest_nation, 'distance': round(min_distance), 'direction': direction}
+        direction = GPS.calculate_cardinal_direction(closest_nation['capital'], loc)
+        return {
+            'nation': closest_nation,
+            'distance': round(min_distance),
+            'direction': direction
+        }
 
     @staticmethod
     def calculate_cardinal_direction(loc1, loc2):
