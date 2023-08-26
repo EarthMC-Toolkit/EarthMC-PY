@@ -9,7 +9,7 @@ class Location:
         self.x = x
         self.z = z
 
-class Gps:
+class GPS:
     def __init__(self):
         self.aurora_map = aurora_map
         self.nova_map = nova_map
@@ -50,17 +50,14 @@ class Gps:
     def manhattan_distance(loc1, loc2):
         return abs(loc2.x - loc1.x) + abs(loc2.z - loc2.z)
 
-    def fastest_route(self, player_name='', town='', nation='', map_name=''):
-        try:
-            if map_name.lower() == 'aurora':
-                player = self.aurora_map.Players.get(player_name)
-                town = self.aurora_map.Towns.get(town)
-                nation = self.aurora_map.Nations.get(nation)
-            elif map_name.lower() == 'nova':
-                player = self.nova_map.Players.get(player_name)
-        except Exception as e:
-            return e
-        global player
+    def find_fastest_route(self, player_name='', town='', nation='', map_name=''):
+        if map_name.lower() == 'aurora':
+            player = self.aurora_map.Players.get(player_name)
+        elif map_name.lower() == 'nova':
+            player = self.nova_map.Players.get(player_name)
+        else:
+            return 'map didnt match any maps'
+
         if not player:
             return None
 
@@ -72,7 +69,6 @@ class Gps:
         elif isinstance(nation, str):
             destination = self.fetch_location_nation(nation, map_name)
 
-
         if destination and player_location and nation:
             distance = GPS.manhattan_distance(player_location, destination)
             return f"nation:\n{nation}\nlocation: {location_spawn}\ndistance: {distance}"
@@ -83,22 +79,10 @@ class Gps:
 
         return None
 
-    def safest_route(self, loc,map_name=str,player_name=str):
+    def find_safest_route(self, loc):
         nations = self.aurora_map.Nations.all() + self.nova_map.Nations.all()
         towns = self.aurora_map.Towns.all() + self.nova_map.Towns.all()
         filtered = []
-
-        try:
-            if map_name.lower() == 'aurora':
-                nation = self.aurora_map.Players.get(player_name)
-                global nation
-            elif map_name.lower() == 'nova':
-                nation = self.nova_map.Players.get(player_name)
-            else:
-                nation = self.aurora_map.Players.get(player_name)
-
-        except Exception as e:
-            return e
 
         for nation in nations:
             capital = next((t for t in towns if t['name'] == nation['capital']['name']), None)
