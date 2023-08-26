@@ -20,8 +20,6 @@ class Map(Nations):
         
         self.GPS = GPS(self)
 
-        self.GPS = GPS(self)
-
     @staticmethod
     def townAreas(towns): return int(sum(t['area'] for t in towns))
 

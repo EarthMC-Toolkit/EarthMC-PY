@@ -1,8 +1,5 @@
-from EarthMC import Maps
+from EarthMC import Map
 import math
-
-aurora_map = Maps.Aurora()
-nova_map = Maps.Nova()
 
 class Location:
     def __init__(self, x, z):
@@ -10,15 +7,14 @@ class Location:
         self.z = z
 
 class GPS:
-    def __init__(self):
-        self.aurora_map = aurora_map
-        self.nova_map = nova_map
+    def __init__(self, map: Map):
+        self.map = map
 
     def fetch_location_town(self, location_name, map_name):
         if map_name.lower() == 'aurora':
-            location = self.aurora_map.Towns.get(location_name)
+            location = self.map.Towns.get(location_name)
         elif map_name.lower() == 'nova':
-            location = self.nova_map.Towns.get(location_name)
+            location = self.map.Towns.get(location_name)
         else:
             return 'map didnt match any maps'
 
@@ -29,12 +25,7 @@ class GPS:
         return None
 
     def fetch_location_nation(self, location_name, map_name):
-        if map_name.lower() == 'aurora':
-            location = self.aurora_map.Nations.get(location_name)
-        elif map_name.lower() == 'nova':
-            location = self.nova_map.Nations.get(location_name)
-        else:
-            return 'map didnt match any maps'
+        location = self.map.Nations.get(location_name)
 
         if location:
             capital = location['capital']
@@ -51,12 +42,7 @@ class GPS:
         return abs(loc2.x - loc1.x) + abs(loc2.z - loc2.z)
 
     def find_fastest_route(self, player_name='', town='', nation='', map_name=''):
-        if map_name.lower() == 'aurora':
-            player = self.aurora_map.Players.get(player_name)
-        elif map_name.lower() == 'nova':
-            player = self.nova_map.Players.get(player_name)
-        else:
-            return 'map didnt match any maps'
+        player = self.map.Players.get(player_name)
 
         if not player:
             return None
@@ -80,8 +66,9 @@ class GPS:
         return None
 
     def find_safest_route(self, loc):
-        nations = self.aurora_map.Nations.all() + self.nova_map.Nations.all()
-        towns = self.aurora_map.Towns.all() + self.nova_map.Towns.all()
+        nations = self.map.Nations.all()
+        towns = self.map.Towns.all()
+
         filtered = []
 
         for nation in nations:
