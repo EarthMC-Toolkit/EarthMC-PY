@@ -4,6 +4,9 @@ from EarthMC import Map
 import math
 from ..Utils import utils
 
+from typing import TypedDict
+
+LocationType = TypedDict('LocationType', { 'x': int, 'z': int })
 class Location:
     def __init__(self, x, z):
         self.x = x
@@ -45,10 +48,10 @@ class GPS:
 
         return None
 
-    def find_route(self, loc: object, route: Route):
+    def find_route(self, loc: LocationType, route: Route):
         return None
 
-    def find_safest_route(self, loc: object):
+    def find_safest_route(self, loc: LocationType):
         nations = self.map.Nations.all()
         towns = self.map.Towns.all()
 
@@ -59,7 +62,7 @@ class GPS:
 
             if capital:
                 flags = capital['flags']
-                if not (flags['public'] or (flags['pvp'] and flags['mobs'])):
+                if not (flags['public'] or flags['pvp']):
                     filtered.append(nation)
 
         min_distance, closest_nation = float('inf'), None
@@ -83,9 +86,9 @@ class GPS:
         }
 
     @staticmethod
-    def calculate_cardinal_direction(loc1, loc2):
-        delta_x = loc2.x - loc1['x']
-        delta_z = loc2.z - loc1['z']
+    def calculate_cardinal_direction(loc1: LocationType, loc2: LocationType):
+        delta_x = loc2['x'] - loc1['x']
+        delta_z = loc2['z'] - loc1['z']
 
         angle_rad = math.atan2(delta_z, delta_x)
         angle_deg = (angle_rad * 180) / math.pi
