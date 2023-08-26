@@ -1,68 +1,54 @@
+from enum import Enum
+
 from EarthMC import Map
 import math
+from ..Utils import utils
 
 class Location:
     def __init__(self, x, z):
         self.x = x
         self.z = z
 
+class RouteOptions:
+    def __init__(self, pvp, public):
+        self.avoid_pvp = pvp
+        self.avoid_public = public
+
+class Route(Enum):
+    SAFEST = RouteOptions(True, True)
+    FASTEST = RouteOptions(False, False)
+    AVOID_PVP = RouteOptions(True, False)
+    AVOID_PUBLIC = RouteOptions(False, True)
+
 class GPS:
     def __init__(self, map: Map):
         self.map = map # The parent Map the GPS was set up on.
 
     def fetch_location_town(self, town_name):
-        location = self.map.Towns.get(town_name)
+        town = self.map.Towns.get(town_name)
 
-        if location:
-            location_spawn = Location(location['x'], location['z'])
-            global location_spawn
+        if town:
+            location_spawn = Location(town['x'], town['z'])
 
         return None
 
     def fetch_location_nation(self, nation_name):
-        location = self.map.Nations.get(nation_name)
+        nation = self.map.Nations.get(nation_name)
 
-        if location:
-            capital = location['capital']
+        if nation:
+            capital = nation['capital']
 
             # Both unused?
-            pvp = location['pvp']
-            public = location['public']
-
+            pvp = nation['pvp']
+            public = nation['public']
             location_spawn = Location(capital['x'], capital['z'])
-            global location_spawn
 
         return None
 
-    @staticmethod
-    def manhattan_distance(loc1, loc2):
-        return abs(loc2.x - loc1.x) + abs(loc2.z - loc2.z)
-
-    def find_fastest_route(self, player_name='', town='', nation=''):
-        player = self.map.Players.get(player_name)
-
-        if not player:
-            return None
-
-        player_location = Location(player['x'], player['z'])
-        destination = None
-
-        if isinstance(town, str):
-            destination = self.fetch_location_town(town)
-        elif isinstance(nation, str):
-            destination = self.fetch_location_nation(nation)
-
-        if destination and player_location and nation:
-            distance = GPS.manhattan_distance(player_location, destination)
-            return f"nation:\n{nation}\nlocation: {location_spawn}\ndistance: {distance}"
-
-        if destination and player_location and town:
-            distance = GPS.manhattan_distance(player_location, destination)
-            return f"town: {town}\nlocation: {location_spawn}\ndistance: {distance}"
-
+    def find_route(self, loc: object, route: Route):
         return None
 
-    def find_safest_route(self, loc):
+    def find_safest_route(self, loc: object):
         nations = self.map.Nations.all()
         towns = self.map.Towns.all()
 
@@ -80,7 +66,7 @@ class GPS:
 
         for nation in filtered:
             capital = nation['capital']
-            dist = GPS.manhattan_distance(capital, loc)
+            dist = utils.manhattan_distance(capital, loc)
 
             if dist < min_distance:
                 min_distance = dist
