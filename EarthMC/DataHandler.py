@@ -20,7 +20,7 @@ class Endpoint:
 
 class OAPI:
     def __init__(self, map = "aurora"):
-        self.domain = f"https://api.earthmc.net/v1/{map}"
+        self.domain = f"https://api.earthmc.net/v2/{map}"
         self.urls = {
             "towns": f"{self.domain}/towns",
             "nations": f"{self.domain}/nations",

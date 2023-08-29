@@ -1,6 +1,7 @@
 from EarthMC import Maps
+import EarthMC.DataHandler
 import math
-
+import time
 aurora_map = Maps.Aurora()
 nova_map = Maps.Nova()
 
@@ -8,6 +9,27 @@ class Location:
     def __init__(self, x, z):
         self.x = x
         self.z = z
+
+    @staticmethod
+    def manhattan_distance(loc1, loc2):
+        return abs(loc2.x - loc1.x) + abs(loc2.z - loc2.z)
+
+    @staticmethod
+    def calculate_cardinal_direction(loc1, loc2):
+        delta_x = loc2.x - loc1['x']
+        delta_z = loc2.z - loc1['z']
+
+        angle_rad = math.atan2(delta_z, delta_x)
+        angle_deg = (angle_rad * 180) / math.pi
+
+        if -45 <= angle_deg < 45:
+            return "east"
+        elif 45 <= angle_deg < 135:
+            return "north"
+        elif angle_deg >= 135 or angle_deg < -135:
+            return "west"
+        else:
+            return "south"
 
 class GPS:
     def __init__(self):
@@ -46,9 +68,7 @@ class GPS:
 
         return None
 
-    @staticmethod
-    def manhattan_distance(loc1, loc2):
-        return abs(loc2.x - loc1.x) + abs(loc2.z - loc2.z)
+
 
     def find_fastest_route(self, player_name='', town='', nation='', map_name=''):
         if map_name.lower() == 'aurora':
@@ -70,11 +90,11 @@ class GPS:
             destination = self.fetch_location_nation(nation, map_name)
 
         if destination and player_location and nation:
-            distance = GPS.manhattan_distance(player_location, destination)
+            distance = Location.manhattan_distance(player_location, destination)
             return f"nation:\n{nation}\nlocation: {location_spawn}\ndistance: {distance}"
 
         if destination and player_location and town:
-            distance = GPS.manhattan_distance(player_location, destination)
+            distance = Location.manhattan_distance(player_location, destination)
             return f"town: {town}\nlocation: {location_spawn}\ndistance: {distance}"
 
         return None
@@ -95,7 +115,7 @@ class GPS:
         min_distance, closest_nation = float('inf'), None
 
         for nation in filtered:
-            dist = self.manhattan_distance(nation['capital']['x'], nation['capital']['z'], loc.x, loc.z)
+            dist = Location.manhattan_distance(nation['capital']['x'], nation['capital']['z'], loc.x, loc.z)
 
             if dist < min_distance:
                 min_distance = dist
@@ -104,22 +124,66 @@ class GPS:
                     'capital': nation['capital']
                 }
 
-        direction = self.calculate_cardinal_direction(closest_nation['capital'], loc)
+        direction = Location.calculate_cardinal_direction(closest_nation['capital'], loc)
         return {'nation': closest_nation, 'distance': round(min_distance), 'direction': direction}
 
-    @staticmethod
-    def calculate_cardinal_direction(loc1, loc2):
-        delta_x = loc2.x - loc1['x']
-        delta_z = loc2.z - loc1['z']
+class Tracker:
+    def __init__(self, x, z):
+        self.x = x
+        self.z = z
+        self.aurora_map = aurora_map
+        self.nova_map = nova_map
+        self.current_players_aurora = {}
+        self.current_players_nova = {}
+        self.old_players_aurora = {}
+        self.old_players_nova = {}
 
-        angle_rad = math.atan2(delta_z, delta_x)
-        angle_deg = (angle_rad * 180) / math.pi
 
-        if -45 <= angle_deg < 45:
-            return "east"
-        elif 45 <= angle_deg < 135:
-            return "north"
-        elif angle_deg >= 135 or angle_deg < -135:
-            return "west"
+    def retrieve_and_update_players(self):
+        # Simulating retrieving player data from aurora_map and nova_map
+        self.current_players_aurora = self.aurora_map.Players
+        self.current_players_nova = self.nova_map.Players
+
+        # Store the old player data
+        self.old_players_aurora = self.current_players_aurora
+        self.old_players_nova = self.current_players_nova
+
+    def run(self):
+        while True:
+            self.retrieve_and_update_players()
+            time.sleep(60)
+
+
+    def track_player(self,player_name=str,map_name=str):
+
+        if map_name.lower() == 'aurora':
+            player = self.aurora_map.Players.get(player_name)
+
+        elif map_name.lower() == 'nova':
+            player = self.nova_map.Players.get(player_name)
+
         else:
-            return "south"
+            return 'map didnt match any maps'
+
+        if player_name:
+            location = Location(player['x'], player['z'])
+            old_location_aurora = self.old_players_aurora[player_name]
+            old_location_nova = self.old_players_nova[player_name]
+            global location,old_location_nova,old_location_aurora
+
+        try:
+            if map_name.lower == 'aurora' or map_name.upper == 'AURORA':
+
+                if player_name in self.current_players_aurora:
+                    return f'Current location {location}of {player_name}'
+                elif player_name not in self.current_players_aurora:
+                    return f'Last known location of {player_name}is{old_location_aurora}'
+
+            elif map_name.lower == 'nova' or map_name.upper == 'NOVA':
+                if player_name in self.current_players_nova:
+                    return f'Current location {location}of {player_name}'
+                elif player_name not in self.old_players_aurora:
+                    return f'Last known location of {player_name}is{old_location_nova}'
+
+        except Exception as e:
+            return e
