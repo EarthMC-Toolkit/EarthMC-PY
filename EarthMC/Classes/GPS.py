@@ -140,11 +140,8 @@ class Tracker:
 
 
     def retrieve_and_update_players(self):
-        # Simulating retrieving player data from aurora_map and nova_map
-        self.current_players_aurora = self.aurora_map.Players
-        self.current_players_nova = self.nova_map.Players
-
-        # Store the old player data
+        self.current_players_aurora = self.aurora_map.Players.get(all)
+        self.current_players_nova = self.nova_map.Players.get(all)
         self.old_players_aurora = self.current_players_aurora
         self.old_players_nova = self.current_players_nova
 
@@ -152,7 +149,6 @@ class Tracker:
         while True:
             self.retrieve_and_update_players()
             time.sleep(60)
-
 
     def track_player(self,player_name=str,map_name=str):
 
