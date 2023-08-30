@@ -45,8 +45,8 @@ class GPS:
             return 'map didnt match any maps'
 
         if location:
-            location_spawn = Location(location['x'], location['z'])
-            global location_spawn
+            location_spawn_nation = Location(location['x'], location['z'])
+            global location_spawn_nation
 
         return None
 
@@ -63,8 +63,8 @@ class GPS:
             pvp = location['pvp']
             public = location['public']
 
-            location_spawn = Location(capital['x'], capital['z'])
-            global location_spawn
+            location_spawn_town = Location(capital['x'], capital['z'])
+            global location_spawn_town
 
         return None
 
@@ -91,11 +91,11 @@ class GPS:
 
         if destination and player_location and nation:
             distance = Location.manhattan_distance(player_location, destination)
-            return f"nation:\n{nation}\nlocation: {location_spawn}\ndistance: {distance}"
+            return f"nation:\n{nation}\nlocation: {location_spawn_nation}\ndistance: {distance}"
 
         if destination and player_location and town:
             distance = Location.manhattan_distance(player_location, destination)
-            return f"town: {town}\nlocation: {location_spawn}\ndistance: {distance}"
+            return f"town: {town}\nlocation: {location_spawn_town}\ndistance: {distance}"
 
         return None
 
@@ -163,9 +163,8 @@ class Tracker:
 
         if player_name:
             location = Location(player['x'], player['z'])
-            old_location_aurora = self.old_players_aurora[player_name]
-            old_location_nova = self.old_players_nova[player_name]
-            global location,old_location_nova,old_location_aurora
+
+            global location
 
         try:
             if map_name.lower == 'aurora' or map_name.upper == 'AURORA':
@@ -173,12 +172,14 @@ class Tracker:
                 if player_name in self.current_players_aurora:
                     return f'Current location {location}of {player_name}'
                 elif player_name not in self.current_players_aurora:
+                    old_location_aurora = self.old_players_aurora[player_name]
                     return f'Last known location of {player_name}is{old_location_aurora}'
 
             elif map_name.lower == 'nova' or map_name.upper == 'NOVA':
                 if player_name in self.current_players_nova:
                     return f'Current location {location}of {player_name}'
                 elif player_name not in self.old_players_aurora:
+                    old_location_nova = self.old_players_nova[player_name]
                     return f'Last known location of {player_name}is{old_location_nova}'
 
         except Exception as e:
