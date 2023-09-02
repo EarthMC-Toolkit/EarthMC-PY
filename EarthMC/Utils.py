@@ -76,4 +76,8 @@ class utils:
 
     @staticmethod
     def manhattan_distance(loc1, loc2):
+
         return abs(loc2.x - loc1.x) + abs(loc2.z - loc1.z)
+
+        return abs(loc2.x - loc1.x) + abs(loc2.z - loc1.z)
+
