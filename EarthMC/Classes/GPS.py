@@ -27,18 +27,8 @@ class GPS:
     def __init__(self, map: Map):
         self.map = map # The parent Map the GPS was set up on.
 
-       
-
     def fetch_location_town(self, town_name):
         town = self.map.Towns.get(town_name)
-
-        if town:
-            location_spawn = Location(town['x'], town['z'])
-
-
-    def fetch_location_town(self, town_name):
-        town = self.map.Towns.get(town_name)
-
 
         if town:
             location_spawn = Location(town['x'], town['z'])
@@ -58,22 +48,6 @@ class GPS:
 
         return None
 
-=======
-    def fetch_location_nation(self, nation_name):
-        nation = self.map.Nations.get(nation_name)
-
-        if nation:
-            capital = nation['capital']
-
-            # Both unused?
-            pvp = nation['pvp']
-            public = nation['public']
-            location_spawn = Location(capital['x'], capital['z'])
-
-        return None
-
-
-      
     def find_route(self, loc: LocationType, route: Route):
         return None
 
@@ -129,12 +103,10 @@ class GPS:
             return "south"
 
 class Tracker:
-
-    def __init__(self, x, z,map_name=str):
-
+    def __init__(self, x, z,map):
         self.x = x
         self.z = z
-        self.Map = Map(f'{map_name}')
+        self.Map = map
 
 
         self.current_players_aurora = {}
@@ -143,10 +115,8 @@ class Tracker:
         self.old_players_nova = {}
 
     def retrieve_and_update_players(self):
-
         self.current_players_aurora = self.Map.Players.all
         self.current_players_nova = self.Map.Players.all
-
         self.old_players_aurora = self.current_players_aurora.copy()
         self.old_players_nova = self.current_players_nova.copy()
 
