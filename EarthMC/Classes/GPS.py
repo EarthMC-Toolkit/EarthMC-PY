@@ -1,10 +1,12 @@
 from enum import Enum
-
 from EarthMC import Map
 import math
 from ..Utils import utils
 
 from typing import TypedDict
+
+import asyncio
+from pyee import EventEmitter
 
 LocationType = TypedDict('LocationType', { 'x': int, 'z': int })
 class Location:
@@ -23,11 +25,23 @@ class Route(Enum):
     AVOID_PVP = RouteOptions(True, False)
     AVOID_PUBLIC = RouteOptions(False, True)
 
-class GPS:
-    def __init__(self, map: Map):
-        self.map = map # The parent Map the GPS was set up on.
+class GPS(EventEmitter):
+    map: Map
+    emitted_underground: bool
+    last_loc: {}
 
-    def fetch_location_town(self, town_name):
+    def __init__(self, map: Map):
+        # Initialize event emitter
+        super().__init__()
+
+        # Used when `track()` is called.
+        self.emitted_underground = False
+        self.last_loc = None
+
+        # The parent Map the GPS was set up on.
+        self.map = map
+
+    def get_town_location(self, town_name):
         town = self.map.Towns.get(town_name)
 
         if town:
@@ -35,7 +49,7 @@ class GPS:
 
         return None
 
-    def fetch_location_nation(self, nation_name):
+    def get_nation_location(self, nation_name):
         nation = self.map.Nations.get(nation_name)
 
         if nation:
@@ -48,7 +62,61 @@ class GPS:
 
         return None
 
+    async def track(self, player_name, interval=3000, route=None):
+        if route is None:
+            route = {
+                "avoidPvp": False,
+                "avoidPublic": False
+            }
+
+        async def track_interval():
+            while True:
+                player = await self.map.Players.get(player_name)
+                if not player["world"]:
+                    self.emit("error", {"err": "INVALID_PLAYER", "msg": "Player is offline or does not exist!"})
+                    return
+
+                underground = (
+                        player["x"] == 0
+                        and player["z"] == 0
+                        and player["world"] != "some-other-bogus-world"
+                )
+
+                if underground:
+                    if not self.emitted_underground:
+                        self.emitted_underground = True
+
+                        if not self.last_loc:
+                            self.emit("underground", "No last location. Waiting for this player to show.")
+                            return
+
+                        try:
+                            route_info = self.find_route(self.last_loc, route)
+                            self.emit("underground", {"lastLocation": self.last_loc, "routeInfo": route_info})
+                        except Exception as e:
+                            self.emit("error", {"err": "INVALID_LAST_LOC", "msg": str(e)})
+                else:
+                    self.last_loc = {
+                        "x": player["x"],
+                        "z": player["z"]
+                    }
+
+                    try:
+                        route_info = self.find_route(
+                            {"x": player["x"], "z": player["z"]},
+                            route,
+                        )
+
+                        self.emit("locationUpdate", route_info)
+                    except Exception as e:
+                        self.emit("error", {"err": "INVALID_LOC", "msg": str(e)})
+
+                await asyncio.sleep(interval / 1000)
+
+        asyncio.create_task(track_interval())
+
     def find_route(self, loc: LocationType, route: Route):
+        # TODO: Implement route finder
         return None
 
     def find_safest_route(self, loc: LocationType):
