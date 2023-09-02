@@ -21,8 +21,11 @@ class OAPI_Nation(AutoRepr):
         self.area = stats['numTownBlocks']
         self.residents = data['residents']
         self.towns = data['towns']
-        self.open = data['isOpen']
-        self.public = data['isPublic']
+
+
+        self.public = data['public']
+        self.pvp = strings['pvp']
+
 
         self.allies = data['allies']
         self.enemies = data['enemies']
