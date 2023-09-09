@@ -1,6 +1,5 @@
 from ..Utils import FetchError, utils, AutoRepr
 from cachetools.func import ttl_cache
-import math
 from ..DataHandler import Endpoint
 endpoint = Endpoint()
 
@@ -28,7 +27,6 @@ class Town(AutoRepr):
         self.residents = residents
         self.flags = flags
         self.colourCodes = colourCodes
-
 
 class Towns:
     def __init__(self, map_name):
@@ -135,4 +133,3 @@ class Towns:
                 filtered_towns.append(t)
 
         return filtered_towns if filtered_towns else []
-

@@ -62,7 +62,7 @@ class GPS(EventEmitter):
 
         return None
 
-    async def track(self, player_name, interval=3000, route=None):
+    async def track(self, player_name: str, interval=3000, route: Route = None):
         if route is None:
             route = {
                 "avoidPvp": False,
@@ -73,14 +73,15 @@ class GPS(EventEmitter):
             while True:
                 player = await self.map.Players.get(player_name)
                 if not player["world"]:
-                    self.emit("error", {"err": "INVALID_PLAYER", "msg": "Player is offline or does not exist!"})
+                    self.emit("error", {
+                        "err": "INVALID_PLAYER",
+                        "msg": "Player is offline or does not exist!"
+                    })
+
                     return
 
-                underground = (
-                        player["x"] == 0
-                        and player["z"] == 0
-                        and player["world"] != "some-other-bogus-world"
-                )
+                underground = (player["x"] == 0 and player["z"] == 0 and
+                               player["world"] != "some-other-bogus-world")
 
                 if underground:
                     if not self.emitted_underground:
@@ -96,16 +97,14 @@ class GPS(EventEmitter):
                         except Exception as e:
                             self.emit("error", {"err": "INVALID_LAST_LOC", "msg": str(e)})
                 else:
-                    self.last_loc = {
+                    loc = {
                         "x": player["x"],
                         "z": player["z"]
                     }
+                    self.last_loc = loc
 
                     try:
-                        route_info = self.find_route(
-                            {"x": player["x"], "z": player["z"]},
-                            route,
-                        )
+                        route_info = self.find_route(loc, route)
 
                         self.emit("locationUpdate", route_info)
                     except Exception as e:

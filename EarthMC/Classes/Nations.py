@@ -1,8 +1,6 @@
-import math
 from .Towns import Town
 from cachetools.func import ttl_cache
 from ..Utils import utils, AutoRepr
-
 
 class Nation(AutoRepr):
     def __init__(self, name="", king="", capital="", residents=None, towns=None, area=0):
@@ -19,10 +17,7 @@ class Nation(AutoRepr):
         self.towns = towns
         self.area = area
 
-
 class nations:
-
-
     def __init__(self, mapName):
         self.Towns = Town(mapName)
         self.Nations = self
