@@ -6,7 +6,7 @@ class OAPI_Nation(AutoRepr):
         stats = data['stats']
 
         self.timestamps = {
-            'founded': timestamps['registered'],
+            'founded': timestamps['registered']
         }
 
         strings = data['strings']
@@ -21,10 +21,8 @@ class OAPI_Nation(AutoRepr):
         self.residents = data['residents']
         self.towns = data['towns']
 
-
         self.public = data['public']
         self.pvp = strings['pvp']
-
 
         self.allies = data['allies']
         self.enemies = data['enemies']
