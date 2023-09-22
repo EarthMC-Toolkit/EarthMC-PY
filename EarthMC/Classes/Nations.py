@@ -1,4 +1,4 @@
-from .Towns import Town
+from .Towns import Towns
 from cachetools.func import ttl_cache
 from ..Utils import utils, AutoRepr
 
@@ -19,7 +19,7 @@ class Nation(AutoRepr):
 
 class nations:
     def __init__(self, mapName):
-        self.Towns = Town(mapName)
+        self.Towns = Towns(mapName)
         self.Nations = self
 
         print("Created new 'nations' instance")
