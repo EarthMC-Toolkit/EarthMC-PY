@@ -25,7 +25,8 @@ class players:
         names = []
         names.extend(self.residents.all())
 
-        for pl in self.townless.all():
+        allTownless = self.townless.all()
+        for pl in allTownless:
             names.append(pl['name'])
             
         return names
@@ -36,27 +37,34 @@ class players:
 
         @ttl_cache(8, 120)
         def all(self):
-            output = []
-            
-            for t in self.Towns.all():
-                for res in t['residents']:
+            output: list[str] = []
+            allTowns = self.Towns.all()
+
+            for t in allTowns:
+                townResidents: list[str] = t['residents']
+
+                for res in townResidents:
                     output.append(res)
 
             return output
 
-        def get(self, resName, resList=None):
-            if resList is None: resList = self.all()
-            foundRes = utils.find(lambda res: res.lower() == resName.lower(), resList)
+        @ttl_cache(8, 120)
+        def get(self, resName: str, resList: list[str] | None):
+            if resList is None:
+                resList = self.all()
 
-            if foundRes is None: return "Could not find resident '" + resName + "'" 
-            return foundRes    
+            res = utils.find(lambda res: res.lower() == resName.lower(), resList)
+            if res is None:
+                return "Could not find resident '" + resName + "'"
+
+            return res
 
     class townless:
         def __init__(self, players):
             self.resList = players.residents.all()
             self.ops = players.online.all()
 
-        @ttl_cache(8, 120)    
+        @ttl_cache(8, 2)    
         def all(self):
             output = []
 
@@ -72,7 +80,7 @@ class players:
         def __init__(self, map):
             self.map = map
 
-        @ttl_cache(8, 120)
+        @ttl_cache(8, 2)
         def all(self):
             output = []
 
@@ -81,16 +89,21 @@ class players:
                 print(e)
                 return []
 
-            for op in playerData["players"]: 
+            pData = playerData["players"]
+            for op in pData: 
                 output.append(vars(OnlinePlayer(op)))
 
             return output
 
         def find(self, playerName): return self.get(playerName)
 
+        @ttl_cache(8, 2)
         def get(self, playerName, ops=None):
-            if ops is None: ops = self.all()
-            foundPlayer = utils.find(lambda player: player['name'].lower() == playerName.lower(), ops)
+            if ops is None: 
+                ops = self.all()
+
+            pName = playerName.lower()
+            foundPlayer = utils.find(lambda player: player['name'].lower() == pName, ops)
         
             if foundPlayer is None: return "Could not find player '" + playerName + "'" 
             return foundPlayer
