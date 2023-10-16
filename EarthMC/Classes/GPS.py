@@ -59,7 +59,9 @@ class GPS(EventEmitter):
         async def track_interval():
             while True:
                 player = await self.map.Players.get(player_name)
-                if not player["world"]:
+                playerX, playerZ, playerWorld = player['x'], player['z'], player['world']
+
+                if not playerWorld:
                     self.emit("error", {
                         "err": "INVALID_PLAYER",
                         "msg": "Player is offline or does not exist!"
@@ -67,9 +69,7 @@ class GPS(EventEmitter):
 
                     return
 
-                underground = (player["x"] == 0 and player["z"] == 0 and
-                               player["world"] != "some-other-bogus-world")
-
+                underground = playerX == 0 and playerZ == 0 and playerWorld != "some-other-bogus-world"
                 if underground:
                     if not self.emitted_underground:
                         self.emitted_underground = True
@@ -80,18 +80,23 @@ class GPS(EventEmitter):
 
                         try:
                             route_info = self.find_route(self.last_loc, route)
-                            self.emit("underground", {"lastLocation": self.last_loc, "routeInfo": route_info})
+                            self.emit("underground", {
+                                "lastLocation": self.last_loc,
+                                "routeInfo": route_info
+                            })
                         except Exception as e:
-                            self.emit("error", {"err": "INVALID_LAST_LOC", "msg": str(e)})
+                            self.emit("error", {
+                                "err": "INVALID_LAST_LOC",
+                                "msg": str(e)
+                            })
                 else:
-                    loc = {
-                        "x": player["x"],
-                        "z": player["z"]
+                    self.last_loc = {
+                        "x": playerX,
+                        "z": playerZ
                     }
-                    self.last_loc = loc
 
                     try:
-                        route_info = self.find_route(loc, route)
+                        route_info = self.find_route(self.last_loc, route)
                         self.emit("locationUpdate", route_info)
                     except Exception as e:
                         self.emit("error", {"err": "INVALID_LOC", "msg": str(e)})
