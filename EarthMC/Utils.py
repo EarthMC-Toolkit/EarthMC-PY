@@ -1,5 +1,4 @@
 import re
-
 from io import StringIO
 from html.parser import HTMLParser
 
@@ -74,3 +73,7 @@ class utils:
             j = i
 
         return abs(area/2) / divisor
+
+    @staticmethod
+    def manhattan_distance(loc1, loc2):
+        return abs(loc2.x - loc1.x) + abs(loc2.z - loc1.z)
