@@ -11,7 +11,7 @@ with open(path.join(this_directory, 'README.md')) as f:
 
 setup(
     name="EarthMC",
-    version="3.4.2",
+    version="3.5.0",
     description="Provides data on people, places and more on the EarthMC Minecraft server.",
     author="Owen3H",
     license="MIT",
