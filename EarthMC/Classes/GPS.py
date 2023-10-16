@@ -1,6 +1,7 @@
 from enum import Enum
-from EarthMC import Map
 import math
+
+from .Towns import Town
 from ..Utils import utils
 
 from typing import TypedDict
@@ -15,6 +16,9 @@ class Location:
         self.z = z
 
 class RouteOptions:
+    avoid_pvp: bool
+    avoid_public: bool
+
     def __init__(self, pvp, public):
         self.avoid_pvp = pvp
         self.avoid_public = public
@@ -25,12 +29,22 @@ class Route(Enum):
     AVOID_PVP = RouteOptions(True, False)
     AVOID_PUBLIC = RouteOptions(False, True)
 
+class RouteInfo:
+    nation: object
+    distance: int
+    direction: str
+
+    def __init__(self, nation, distance, direction):
+        self.nation = nation
+        self.distance = distance
+        self.direction = direction
+
 class GPS(EventEmitter):
-    map: Map
+    map: None
     emitted_underground: bool
     last_loc: {}
 
-    def __init__(self, map: Map):
+    def __init__(self, map):
         # Initialize event emitter
         super().__init__()
 
@@ -41,34 +55,7 @@ class GPS(EventEmitter):
         # The parent Map the GPS was set up on.
         self.map = map
 
-    def get_town_location(self, town_name):
-        town = self.map.Towns.get(town_name)
-
-        if town:
-            location_spawn = Location(town['x'], town['z'])
-
-        return None
-
-    def get_nation_location(self, nation_name):
-        nation = self.map.Nations.get(nation_name)
-
-        if nation:
-            capital = nation['capital']
-
-            # Both unused?
-            pvp = nation['pvp']
-            public = nation['public']
-            location_spawn = Location(capital['x'], capital['z'])
-
-        return None
-
-    async def track(self, player_name: str, interval=3000, route: Route = None):
-        if route is None:
-            route = {
-                "avoidPvp": False,
-                "avoidPublic": False
-            }
-
+    async def track(self, player_name: str, interval=3000, route: RouteOptions = Route.FASTEST.value):
         async def track_interval():
             while True:
                 player = await self.map.Players.get(player_name)
@@ -105,7 +92,6 @@ class GPS(EventEmitter):
 
                     try:
                         route_info = self.find_route(loc, route)
-
                         self.emit("locationUpdate", route_info)
                     except Exception as e:
                         self.emit("error", {"err": "INVALID_LOC", "msg": str(e)})
@@ -114,46 +100,56 @@ class GPS(EventEmitter):
 
         asyncio.create_task(track_interval())
 
-    def find_route(self, loc: LocationType, route: Route):
-        # TODO: Implement route finder
-        return None
-
     def find_safest_route(self, loc: LocationType):
-        nations = self.map.Nations.all()
+        return self.find_route(loc, Route.SAFEST.value)
+
+    def find_fastest_route(self, loc: LocationType):
+        return self.find_route(loc, Route.FASTEST.value)
+
+    def find_route(self, loc: LocationType, route: RouteOptions):
         towns = self.map.Towns.all()
+        nations = self.map.Nations.all()
 
         filtered = []
+        for n in nations:
+            capital: Town = next((t for t in towns if t.name == n['capital']['name']), None)
+            if capital is None: continue
 
-        for nation in nations:
-            capital = next((t for t in towns if t['name'] == nation['capital']['name']), None)
+            PVP = route.avoid_pvp and capital.flags['pvp']
+            PUBLIC = route.avoid_public and (capital.flags['public'] is None)
+            if PVP or PUBLIC: continue
 
-            if capital:
-                flags = capital['flags']
-                if not (flags['public'] or flags['pvp']):
-                    filtered.append(nation)
+            filtered.append(n)
 
-        min_distance, closest_nation = float('inf'), None
+        if len(filtered) < 1:
+            return None
 
-        for nation in filtered:
-            capital = nation['capital']
-            dist = utils.manhattan_distance(capital, loc)
+        distance, nation = 0.0, None
+        for n in filtered:
+            closest = GPS.find_closest(distance, n, loc)
+            distance, nation = closest['distance'], closest['nation']
 
-            if dist < min_distance:
-                min_distance = dist
-                closest_nation = {
-                    'name': nation['name'],
-                    'capital': capital
-                }
+        direction = GPS.cardinal_direction(nation['capital'], loc)
+        return RouteInfo(nation, distance, direction)
 
-        direction = GPS.calculate_cardinal_direction(closest_nation['capital'], loc)
+    @staticmethod
+    def find_closest(dist, nation, loc: LocationType):
+        capital = nation["capital"]
+        curDist = utils.manhattan_distance(capital, loc)
+
+        if dist < curDist:
+            return dist
+
         return {
-            'nation': closest_nation,
-            'distance': round(min_distance),
-            'direction': direction
+            "distance": round(curDist),
+            "nation": {
+                "name": nation["name"],
+                "capital": capital
+            }
         }
 
     @staticmethod
-    def calculate_cardinal_direction(loc1: LocationType, loc2: LocationType):
+    def cardinal_direction(loc1: LocationType, loc2: LocationType):
         delta_x = loc2['x'] - loc1['x']
         delta_z = loc2['z'] - loc1['z']
 

@@ -3,12 +3,10 @@ from cachetools.func import ttl_cache
 from ..Utils import utils, AutoRepr
 
 class Nation(AutoRepr):
-    def __init__(self, name="", king="", capital="", residents=None, towns=None, area=0):
-        if towns is None:
-            towns = []
-
-        if residents is None:
-            residents = []
+    def __init__(self, name="", king="", capital=None, residents=None, towns=None, area=0):
+        if capital is None: capital = {}
+        if towns is None: towns = []
+        if residents is None: residents = []
 
         self.name = name
         self.king = king
@@ -38,7 +36,7 @@ class nations:
     @ttl_cache(16, 120)
     def all(self):
         raw = {}
-        output = []
+        output: list[dict[str, Nation]] = []
 
         for town in self.Towns.all():
             nationName = town["nation"]

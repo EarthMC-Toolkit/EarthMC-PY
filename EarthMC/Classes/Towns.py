@@ -99,7 +99,7 @@ class Towns:
 
             towns_array.append(ct)
 
-        cached_towns = []
+        cached_towns: list[dict[str, Town]]  = []
         temp = {}
 
         for t in towns_array:
