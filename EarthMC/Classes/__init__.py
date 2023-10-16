@@ -1,6 +1,6 @@
-from .Towns import Town as Towns
-from .Nations import nations as Nations
-from .Players import players as Players
+from .Towns import Towns
+from .Nations import Nations
+from .Players import Players
 
 from .GPS import GPS
 

@@ -12,7 +12,7 @@ class OnlinePlayer(AutoRepr):
         self.y = player["y"]
         self.z = player["z"]
 
-class players:
+class Players:
     def __init__(self, map, towns):
         self.Towns = towns
 

@@ -15,7 +15,10 @@ class Nation(AutoRepr):
         self.towns = towns
         self.area = area
 
-class nations:
+    #def __sub__(self, key, other):
+        #return getattr(self, key) - other
+
+class Nations:
     def __init__(self, mapName):
         self.Towns = Towns(mapName)
         self.Nations = self
@@ -76,7 +79,7 @@ class nations:
 
     def nearby(self, x_input, z_input, x_radius, z_radius, nations=None):
         if nations is None:
-            nations= self.all()
+            nations = self.all()
 
         filtered_nations = []
         for n in nations:
