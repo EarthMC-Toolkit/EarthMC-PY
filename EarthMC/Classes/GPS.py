@@ -161,11 +161,7 @@ class GPS(EventEmitter):
         angle_rad = math.atan2(delta_z, delta_x)
         angle_deg = (angle_rad * 180) / math.pi
 
-        if -45 <= angle_deg < 45:
-            return "east"
-        elif 45 <= angle_deg < 135:
-            return "north"
-        elif angle_deg >= 135 or angle_deg < -135:
-            return "west"
-        else:
-            return "south"
+        if -45 <= angle_deg < 45: return "east"
+        elif 45 <= angle_deg < 135: return "north"
+        elif angle_deg >= 135 or angle_deg < -135: return "west"
+        else: return "south"
